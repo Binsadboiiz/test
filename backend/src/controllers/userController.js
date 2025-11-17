@@ -130,7 +130,7 @@ export async function editUser(req, res) {
             favoriteBooks,
             newPassword
         } = req.body;
-        const user = await User.findByIdAndUpdate(userId);
+        const user = await User.findById(userId);
 
         if(!user)
             return res.status(404).json({message: "User not found"});

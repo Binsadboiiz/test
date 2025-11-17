@@ -4,9 +4,11 @@ import path from 'path';
 import routerUser from './src/routes/userRoutes.js';
 import connectDB from './src/config/db.js';
 
+dotenv.config();
+
 const app = express();
 
-connectDB();
+await connectDB();
 
 app.use(express.json());
 app.use('/api/users', routerUser);
