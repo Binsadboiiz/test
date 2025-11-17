@@ -4,7 +4,7 @@ import User from '../models/users.js';
 
 export async function registerUser(req, res) {
     try {
-        const {username, email, password, dispayname} = req.body;
+        const {username, email, password, displayname} = req.body;
         
         // check thiếu dữ liệu
         if(!username || !email || !password)
@@ -25,14 +25,14 @@ export async function registerUser(req, res) {
             username,
             email,
             password: hashedPassword,
-            displayname: dispayname || username
+            displayname: displayname || username
         });
         
         const userResponse = {
             _id: newUSer._id,
             username: newUSer.username,
             email: newUSer.email,
-            dispayname: newUSer.displayname,
+            displayname: newUSer.displayname,
             avatarUrl: newUSer.avatarUrl,
             roles: newUSer.roles,
             isBlocked: newUSer.isBlocked,
@@ -75,7 +75,7 @@ export async function loginUser(req, res) {
             _id: user._id,
             username: user.username,
             email: user.email,
-            dispayname: user.displayname,
+            displayname: user.displayname,
             avatarUrl: user.avatarUrl,
             roles: user.roles,
         };
@@ -124,7 +124,7 @@ export async function editUser(req, res) {
     try {
         const userId = req.params.id;
         const {
-            dispayname,
+            displayname,
             avatarUrl,
             isBlocked,
             favoriteBooks,
@@ -135,7 +135,7 @@ export async function editUser(req, res) {
         if(!user)
             return res.status(404).json({message: "User not found"});
 
-        if(dispayname !== undefined) user.displayname = dispayname;
+        if(displayname !== undefined) user.displayname = displayname;
         if(avatarUrl !== undefined) user.avatarUrl = avatarUrl;
         if(isBlocked !== undefined) user.isBlocked = isBlocked;
         if(favoriteBooks !== undefined) user.favoriteBooks = favoriteBooks;
@@ -147,7 +147,7 @@ export async function editUser(req, res) {
 
         const editUser = await user.save();
         const userResponse = {
-            dispayname: editUser.displayname,
+            displayname: editUser.displayname,
             avatarUrl: editUser.avatarUrl,
             isBlocked: editUser.isBlocked,
             favoriteBooks: editUser.favoriteBooks,
