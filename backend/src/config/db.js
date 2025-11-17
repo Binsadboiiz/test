@@ -1,11 +1,23 @@
-import mongoose, { connection } from "mongoose";
+import mongoose     from "mongoose";
+import dotenv       from 'dotenv'
 
-export default async function connectDB() {
+
+dotenv.config();
+const urlConnect = process.env.MONGO_URI;
+console.log(urlConnect);
+
+const connect = async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URI);
-        console.log(`MongoDB Connected: ${connection.host}`);
+        await mongoose.connect(urlConnect, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log('> Kết nối database thành công!');
     } catch (error) {
-        console.error(`Error connecting to MongoDB: ${error.message}`);
-        process.exit(1);
+        if(error) {
+            console.log('> Lỗi kết nối database: ', error.message);
+        }
     }
-};
+}
+
+export default { connect }
