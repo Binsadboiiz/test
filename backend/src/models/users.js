@@ -3,13 +3,14 @@ import mongoose from "mongoose";
 const UserSchema = new mongoose.Schema({
     username: {
         type: String,
-        require: true,
+        required: true,
         unique: true,
+        lowercase: true,
         trim: true
     },
     email: {
         type: String,
-        require: true,
+        required: true,
         unique: true,
         trim: true,
         lowercase: true
@@ -18,9 +19,9 @@ const UserSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    passwordHash: {
+    password: {
         type: String,
-        require: true
+        required: true
     },
     displayname: {
         type: String,

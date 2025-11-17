@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
+import routerUser from './src/routes/userRoutes.js';
 
 const app = express();
 
@@ -18,7 +19,7 @@ const app = express();
 
 
 
-
+app.use('/api/users', routerUser);
 
 app.get('/', (req, res)=>{
     res.send("API is Working");
