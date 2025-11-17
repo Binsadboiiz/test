@@ -1,27 +1,30 @@
 import bcrypt from 'bcrypt';
 import User from '../models/users.js';
+import ErrorApi from '../middlewares/handleError.js';
 
 
-export async function registerUser(req, res) {
+export async function registerUser(req, res, next) {
     try {
         const {username, email, password, displayname} = req.body;
         
         // check thiếu dữ liệu
-        if(!username || !email || !password)
-            return res.status(400).json({message: "Username, email, password are required"});
-
+        if(!username || !email || !password) {
+            throw new ErrorApi("Username, email, password are required", 400);
+        }
+    
         // check trùng username hoặc email
         const existingUser = await User.findOne({
             $or: [{username}, {email}]
         });
-        if(existingUser)
-            return res.status(409).json({message: "Username or email already exists"});
-
+        if(existingUser) {
+            throw new ErrorApi("Username or email already exists", 409);
+        }
+            
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Add new user
-        const newUSer = await User.create({
+        const newUser = await User.create({
             username,
             email,
             password: hashedPassword,
@@ -29,47 +32,44 @@ export async function registerUser(req, res) {
         });
         
         const userResponse = {
-            _id: newUSer._id,
-            username: newUSer.username,
-            email: newUSer.email,
-            displayname: newUSer.displayname,
-            avatarUrl: newUSer.avatarUrl,
-            roles: newUSer.roles,
-            isBlocked: newUSer.isBlocked,
-            favoriteBooks: newUSer.favoriteBooks,
-            createAt: newUSer.createdAt
+            _id: newUser._id,
+            username: newUser.username,
+            email: newUser.email,
+            displayname: newUser.displayname,
+            avatarUrl: newUser.avatarUrl,
+            roles: newUser.roles,
+            isBlocked: newUser.isBlocked,
+            favoriteBooks: newUser.favoriteBooks,
+            createdAt: newUser.createdAt
         };
         res.status(201).json({message: "Registration successful", userResponse});
     } catch (error) {
-        console.error("registerUser error: ", error);
-        res.status(500).json({message: "Server error", error: error.message});
+        next(error);
     }
 };
 
-export async function loginUser(req, res) {
+export async function loginUser(req, res, next) {
     try {
         const {usernameOrEmail, password} = req.body;
 
-        if(!usernameOrEmail || !password)
-            return res.status(400).json({message: "Please enter username/email and password"});
-
-        // find ủe by username or email
+        if(!usernameOrEmail || !password) {
+            throw new ErrorApi("Please enter username/email and password", 400);
+        }
+            
+        // find url by username or email
         const user = await User.findOne({
             $or: [
                 {username: usernameOrEmail},
                 {email: usernameOrEmail}
             ]
         });
-        if(!user)
-            return res.status(401).json({message: "Wrong account or password"});
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            throw new ErrorApi("Wrong account or password", 401);
+        }
 
-        // check password
-        const isPassword = await bcrypt.compare(password, user.password);
-        if(!isPassword)
-            return res.status(401).json({message: "Wrong account or password"});
-
-        if(user.isBlocked)
-            return res.status(403).json({message: "Account is blocked"});
+        if(user.isBlocked === true) {
+            throw new ErrorApi("Account is blocked", 403);
+        }
 
         const userResponse = {
             _id: user._id,
@@ -81,48 +81,32 @@ export async function loginUser(req, res) {
         };
         res.json({message: "Login Successfully", userResponse});
     } catch (error) {
-        console.error("longinUser error: ", error);
-        res.status(500).json({message: "Server error", error: error.message});
+        next(error);
     }
 };
 
-export async function getAllUsers(req, res) {
+export async function getAllUsers(req, res, next) {
     try {
         const user = await User.find().select("-password -passwordOld");
-        if(!user)
-            return res.status(404).json({message: "Can not find users"})
         res.json(user);
     } catch (error) {
-        console.error("getAllUsers error:", error);
-        res.status(500).json({
-            message: "Lỗi server khi lấy danh sách user",
-            error: error.message
-        });
+        next(error);
     }
 };
 
-export async function getUserById(req, res) {
+export async function getUserById(req, res, next) {
    try {
-    const userId = req.params.id;
-
-    const user = await User.findById(userId).select("-password -passwordOld");
-
-    if(!user)
-        return res.status(404).json({message: "User not found"});
-
-    res.json(user);
+        const user = await User.findById(req.params.id).select("-password -passwordOld");
+        if(!user) throw new ErrorApi("User not found", 404);
+        res.json(user);
    } catch (error) {
-    console.error("getUserById error:", error);
-    res.status(500).json({
-        message: "Lỗi server khi lấy user",
-        error: error.message
-        });
+        next(error);
    } 
 };
 
-export async function editUser(req, res) {
+export async function editUser(req, res, next) {
     try {
-        const userId = req.params.id;
+        const { id } = req.params;
         const {
             displayname,
             avatarUrl,
@@ -130,10 +114,9 @@ export async function editUser(req, res) {
             favoriteBooks,
             newPassword
         } = req.body;
-        const user = await User.findById(userId);
+        const user = await User.findById(id);
 
-        if(!user)
-            return res.status(404).json({message: "User not found"});
+        if(!user) throw new ErrorApi("User not found", 404);
 
         if(displayname !== undefined) user.displayname = displayname;
         if(avatarUrl !== undefined) user.avatarUrl = avatarUrl;
@@ -145,39 +128,32 @@ export async function editUser(req, res) {
             user.password = await bcrypt.hash(newPassword, 10);
         }
 
-        const editUser = await user.save();
-        const userResponse = {
-            displayname: editUser.displayname,
-            avatarUrl: editUser.avatarUrl,
-            isBlocked: editUser.isBlocked,
-            favoriteBooks: editUser.favoriteBooks,
-            updateAt: editUser.updatedAt
-        };
+        await user.save();
 
-        res.json({message: "Edit user success", userResponse});
-    } catch (error) {
-        console.error("updateUser error:", error);
-        res.status(500).json({
-            message: "Lỗi server khi cập nhật user",
-            error: error.message
+        res.json({
+            message: "Edit user success",
+            user: {
+                displayname: user.displayname,
+                avatarUrl: user.avatarUrl,
+                isBlocked: user.isBlocked,
+                favoriteBooks: user.favoriteBooks,
+                updatedAt: user.updatedAt
+            }
         });
+    } catch (error) {
+        next(error);
     }
 };
 
-export async function deleteUser(req, res) {
+export async function deleteUser(req, res, next) {
     try {
         const userId = req.params.id;
          
         const deleteUser = await User.findByIdAndDelete(userId);
-        if(!deleteUser)
-            return res.status(404).json({message: "User not found"});
+        if(!deleteUser) throw new ErrorApi("User not found", 404);
 
         res.json({message: "Delete user successfully"});
     } catch (error) {
-        console.error("deleteUser error:", error);
-        res.status(500).json({
-            message: "Lỗi server khi xóa user",
-            error: error.message
-        });
+        next(error);
     }
 };
