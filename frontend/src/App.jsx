@@ -5,7 +5,7 @@ import LoginForm from "./components/loginForm";
 
 function App() {
   const handleLoginSuccess = (user) => {
-    console.log("Login successful", user);
+    alert("Login successful", user);
   }
   return <LoginForm onLoginSuccess={handleLoginSuccess}/>
 }
