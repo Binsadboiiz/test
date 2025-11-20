@@ -84,3 +84,34 @@
   background-color: #ccc;
   cursor: not-allowed;
 }
+.error-box,
+.success-box {
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.error-box {
+  background: #ffe5e5;
+  color: #b00020;
+}
+
+.success-box {
+  background: #e5ffe9;
+  color: #0f7b22;
+}
+.switch-auth {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.switch-auth a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.switch-auth a:hover {
+  text-decoration: underline;
+}
