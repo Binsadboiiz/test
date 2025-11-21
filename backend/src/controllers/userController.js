@@ -90,15 +90,32 @@ export async function loginUser(req, res, next) {
             roles: user.roles,
         };
 
+        //set cookie để lưu token
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 24 * 60 * 60 * 1000 //1 ngày
+        });
+
         res.json({
             message: "Login Successfully", 
-            token,
             userResponse
         });
     } catch (error) {
         next(error);
     }
 };
+
+export function logoutUser(req, res, next) {
+    try {
+        res.clearCookie("token");
+        res.json({ message: "Logout successfully" });
+    } catch (error) {
+        next(error);
+    }
+}
+
 
 export async function getAllUsers(req, res, next) {
     try {
