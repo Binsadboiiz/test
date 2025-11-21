@@ -20,11 +20,13 @@ export default function LoginForm() {
     e.preventDefault();
     setError("");
     setSuccessMsg("");
+    setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/users/login", {
+      const res = await fetch("http://localhost:3000/api/users/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: 'include',
         body: JSON.stringify(formData),
       });
 
@@ -55,9 +57,9 @@ export default function LoginForm() {
         <label htmlFor="username">Username or Email:</label>
         <input
           type="text"
-          name="username"
-          id="username"
-          value={formData.username}
+          name="usernameOrEmail"
+          id="usernameOrEmail"
+          value={formData.usernameOrEmail}
           autoComplete="username"
           onChange={handleChange}
           placeholder="Enter your username or email"

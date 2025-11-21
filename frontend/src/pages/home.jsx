@@ -1,17 +1,29 @@
-import { data } from "react-router-dom";
 import "../styles/homepage.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 export default function HomePage() {
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(()=> 
+    JSON.parse(localStorage.getItem("user")) || null
+  );
 
-  useEffect(() => {
-    const savedData = localStorage.getItem("user");
-    if (savedData) {
-      setUser(JSON.parse(savedData));
+  const handleLogout = async () => {
+    try {
+      await fetch("http://localhost:3000/api/users/logout", {
+        method: "POST",
+        credentials: "include"
+      })
+    } catch (error) {
+      console.error(error);
+    } finally {
+      localStorage.removeItem("user");
+      setUser(null);
+      navigate("/");
     }
-  }, []);
+  }
 
   return (
     <>
@@ -22,10 +34,10 @@ export default function HomePage() {
         <div className="title-header">MINI - PROJECT</div>
         {!user && (
           <div className="btn-group">
-            <button type="button" className="btn btn-primary">
+            <button type="button" className="btn btn-primary" onClick={()=>navigate("/login")}>
               LOG IN
             </button>
-            <button type="button" className="btn btn-primary">
+            <button type="button" className="btn btn-primary" onClick={()=> navigate("/register")}>
               SIGN UP
             </button>
           </div>
@@ -66,7 +78,7 @@ export default function HomePage() {
             <span>Threads</span>
           </div>
         </div>
-        <div className="btn-out">
+        <div className="btn-out" onClick={handleLogout}>
           <i className="bi bi-box-arrow-left"></i>
           <span>Log out</span>
         </div>
