@@ -33,6 +33,10 @@ export default function LoginForm() {
         throw new Error(data.message || "Something went wrong");
       }
 
+      if(data.userResponse) {
+        localStorage.setItem("user", JSON.stringify(data.userResponse));
+      }
+
       setSuccessMsg(data.message || "Đăng nhập thành công")
       
     } catch (err) {

@@ -74,11 +74,11 @@ export default function RegisterForm() {
 
     return (
         <div className="register-container">
-            <h2 className="register-title">Register</h2>
+            
             {error && <div className="error-box">{error}</div>}
             {successMsg && <div className="success-box">{successMsg}</div>}
-
             <form onSubmit={handleSubmit}>
+                <h2 className="register-title">Register</h2>
                 <div className="form-group">
                     <label htmlFor="username">Username: </label>
                     <input type="text" name="username" value={formData.username} onChange={handleChange}/>
