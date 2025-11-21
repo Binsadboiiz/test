@@ -1,0 +1,117 @@
+/* Reset cơ bản */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Container bao quanh: Căn giữa form theo cả chiều dọc và ngang */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f2f5; /* Màu nền nhẹ dịu mắt */
+  padding: 20px;
+}
+
+/* Form Login: Dạng thẻ (Card) */
+.login-form {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 400px; /* Giới hạn chiều rộng */
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+  display: flex;
+  flex-direction: column; /* Xếp các phần tử theo chiều dọc */
+}
+
+/* Tiêu đề */
+.login-form h2 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: #333;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Label */
+.login-form label {
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+}
+
+/* Input fields */
+.login-form input {
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+/* Hiệu ứng khi click vào input */
+.login-form input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* Nút Submit */
+.login-form button {
+  padding: 14px;
+  background-color: #007bff; /* Màu xanh chủ đạo */
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+/* Hiệu ứng hover nút */
+.login-form button:hover {
+  background-color: #0056b3;
+}
+
+/* Trạng thái loading/disabled */
+.login-form button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+.error-box,
+.success-box {
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.error-box {
+  background: #ffe5e5;
+  color: #b00020;
+}
+
+.success-box {
+  background: #e5ffe9;
+  color: #0f7b22;
+}
+.switch-auth {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.switch-auth a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.switch-auth a:hover {
+  text-decoration: underline;
+}
