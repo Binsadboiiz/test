@@ -5,14 +5,23 @@ import chalk from 'chalk';
 import boxen from 'boxen';
 import connectDB from './config/db.js';
 import router from './routes/index.js';
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
 router(app);
 await connectDB.connect();
 //Chạy lại npm i để cập nhật thư viện
