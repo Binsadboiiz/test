@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import User from '../models/users.js';
 import ErrorApi from '../middlewares/handleError.js';
+import jwt from 'jsonwebtoken';
 
 
 export async function registerUser(req, res, next) {
@@ -50,19 +51,19 @@ export async function registerUser(req, res, next) {
 
 export async function loginUser(req, res, next) {
     try {
-        const {usernameOrEmail, password} = req.body;
+        const { usernameOrEmail, password } = req.body;
 
         if(!usernameOrEmail || !password) {
             throw new ErrorApi("Please enter username/email and password", 400);
         }
             
-        // find url by username or email
         const user = await User.findOne({
             $or: [
                 {username: usernameOrEmail},
                 {email: usernameOrEmail}
             ]
         });
+
         if (!user || !(await bcrypt.compare(password, user.password))) {
             throw new ErrorApi("Wrong account or password", 401);
         }
@@ -70,6 +71,15 @@ export async function loginUser(req, res, next) {
         if(user.isBlocked === true) {
             throw new ErrorApi("Account is blocked", 403);
         }
+
+        const token = jwt.sign(
+            { 
+                _id: user._id, 
+                roles: user.roles 
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '1d' }
+        );
 
         const userResponse = {
             _id: user._id,
@@ -79,7 +89,12 @@ export async function loginUser(req, res, next) {
             avatarUrl: user.avatarUrl,
             roles: user.roles,
         };
-        res.json({message: "Login Successfully", userResponse});
+
+        res.json({
+            message: "Login Successfully", 
+            token,
+            userResponse
+        });
     } catch (error) {
         next(error);
     }

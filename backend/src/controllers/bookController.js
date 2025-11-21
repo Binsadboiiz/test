@@ -18,7 +18,7 @@ export async function createBook(req, res, next) {
             thumbnailUrl,
             publisher_id
         });
-        res.staus(201).json({message: "Book created successfully", newBook});
+        res.status(201).json({message: "Book created successfully", newBook});
     } catch (error) {
         next(error);
     }
@@ -76,7 +76,9 @@ export async function editBook(req, res, next) {
                 bookPublicationYear: book.bookPublicationYear,
                 bookGenre: book.bookGenre,
                 thumbnailUrl: book.thumbnailUrl,
-                publisher_id: book.publisher_id
+                publisher_id: book.publisher_id,
+                averageRating: book.averageRating,
+                numOfReviews: book.numOfReviews
             }
         })
 
@@ -97,3 +99,47 @@ export async function deleteBook(req, res, next) {
         next(error);
     }
 };
+
+export async function searchBooks(req, res, next) {
+    try {
+        const { q, genre, year, minRating } = req.query;
+
+        let query = {};
+
+        // 1. Tìm theo Từ khóa (Tên sách hoặc Tác giả)
+        if (q) {
+            query.$or = [
+                { bookTitle: { $regex: q, $options: 'i' } }, // 'i' = không phân biệt hoa thường
+                { bookAuthor: { $regex: q, $options: 'i' } }
+            ];
+        }
+
+        // 2. Lọc theo Thể loại
+        if (genre) {
+            // Giả sử bookGenre là mảng, $in tìm xem genre có nằm trong mảng đó ko
+            query.bookGenre = { $in: [genre] };
+        }
+
+        // 3. Lọc theo Năm xuất bản
+        if (year) {
+            query.bookPublicationYear = Number(year);
+        }
+
+        // 4. Lọc theo Đánh giá (ví dụ: sách trên 4 sao)
+        if (minRating) {
+            query.averageRating = { $gte: Number(minRating) };
+        }
+
+        const books = await Book.find(query)
+            .populate('publisher_id', 'pubName')
+            .sort({ createdAt: -1 }); // Kết quả mới nhất lên đầu
+
+        res.json({
+            count: books.length,
+            results: books
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+

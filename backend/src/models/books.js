@@ -30,6 +30,17 @@ const bookSchema = new mongoose.Schema({
         type: String,
         default: ""
     }, 
+    averageRating: {
+        type: Number,
+        default: 0,
+        min: 0,
+        max: 5,
+        set: val => Math.round(val * 10) / 10 // Làm tròn 1 chữ số thập phân (4.666 -> 4.7)
+    },
+    numOfReviews: {
+        type: Number,
+        default: 0
+    },
     publisher_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Publisher',
