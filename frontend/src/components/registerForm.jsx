@@ -42,7 +42,7 @@ export default function RegisterForm() {
 
         setLoading(true);
         try {
-            const res = await fetch("http://localhost:5000/api/users/register", {
+            const res = await fetch("http://localhost:3000/api/users/register", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({
@@ -96,12 +96,12 @@ export default function RegisterForm() {
 
                 <div className="form-group">
                     <label htmlFor="password">Password: </label>
-                    <input type="text" name="password" value={formData.password} onChange={handleChange}/>
+                    <input type="password" name="password" value={formData.password} onChange={handleChange}/>
                 </div>
 
                 <div className="form-group">
                     <label htmlFor="comfirmPassword">Comfrim Password: </label>
-                    <input type="text" name="comfirmPassword" value={formData.comfirmPassword} onChange={handleChange}/>
+                    <input type="password" name="comfirmPassword" value={formData.comfirmPassword} onChange={handleChange}/>
                 </div>
 
                 <button type="submit" disabled={loading} className="register-btn">{loading ? "Loading..." : "Register"}</button>
