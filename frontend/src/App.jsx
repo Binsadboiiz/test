@@ -7,6 +7,8 @@ import AdminDashboard from "./pages/adminDashboard";
 
 import UserManagemnet from "./components/userManagement";
 import MainLayout from "./layout/mainlayout";
+import BookList from "./pages/bookList";
+import ErrorPage from "./components/ErrorPage";
 
 function App() {
   return (
@@ -15,9 +17,11 @@ function App() {
           <Route path='/' element={<HomePage/>}/>
           <Route path='/admin/dashboard' element={<AdminDashboard/>}/>
           <Route path='admin/users' element={<UserManagemnet/>}/>
+          <Route path='book' element={<BookList/>}/>
           <Route path='/register' element={<RegisterForm/>}/>
           <Route path='/login' element={<LoginForm/>}/>
         </Route>
+        <Route path='/error' element={<ErrorPage/>} />
       </Routes>
   )
 }
