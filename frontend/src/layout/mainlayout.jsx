@@ -55,13 +55,13 @@ export default function MainLayout() {
         </div>
 
         <div className="btn-group">
-          <div className="btn-home">
+          <div className="btn-home" onClick={()=> navigate("/")}>
             <i className="bi bi-house"></i>
             <span>Home</span>
           </div>
         </div>
         <div className="btn-group">
-          <div className="btn-list">
+          <div className="btn-list" onClick={()=> navigate("/book")}>
             <i className="bi bi-journals"></i>
             <span>List Books</span>
           </div>
