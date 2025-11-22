@@ -13,6 +13,8 @@ export default function BookList() {
     const [search, setSearch] = useState("");
     const [genres, setGenres] = useState([]);
     const [genre, setGenre] = useState("all");
+    const [years, setYears] = useState([]);
+    const [year, setYear] = useState("");
     const [loading, setLoading] = useState(false);
 
     //gọi API lấy sách
@@ -23,8 +25,9 @@ export default function BookList() {
 
             params.append("page", currentPage);
             params.append("limit", LIMIT);
-            if (search.trim()) params.append("serach", search.trim());
+            if (search.trim()) params.append("search", search.trim());
             if (genre !== "all") params.append("genre", genre);
+            if(year) params.append("year", year);
 
             const res = await fetch(`http://localhost:3000/api/books?${params.toString()}`);
             const data = await res.json();
@@ -32,8 +35,11 @@ export default function BookList() {
             if(Array.isArray(data.genres)) {
                 setGenres(data.genres);
             }
+            if(Array.isArray(data.years)) {
+                setYears(data.years)
+            }
 
-            setBooks(data.book || []);
+            setBooks(data.books || []);
             setTotalPages(data.totalPages || 1)
         } catch (error) {
             HandleErrorAPI(error, navigate, "BôkList");
@@ -44,19 +50,22 @@ export default function BookList() {
 
     useEffect(() => {
         fetchBooks();
-    }, [currentPage])
+    }, [currentPage, search, genre])
 
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
         setCurrentPage(1);
-        fetchBooks();
     };
 
     const handleGenreChange = (e) => {
         setGenre(e.target.value);
         setCurrentPage(1);
-        fetchBooks();
+    };
+
+    const handleYearChange = (e) => {
+        setYear(e.target.value);
+        setCurrentPage(1);
     };
 
     const goToPage = (page) => {
@@ -70,12 +79,18 @@ export default function BookList() {
             <div className="nav-fields">
                 <div className="nav-filter">
                     <select value={genre} onChange={handleGenreChange}>
+                         <option value="all">All genres</option>
                          {genres.map((g)=> (
                             <option key={g} value={g}>{g}</option>
                         ))}
                     </select>
+                    <select value={year} onChange={handleYearChange}>
+                         <option value="all">Year</option>
+                         {years.map((y)=> (
+                            <option key={y} value={y}>{y}</option>
+                        ))}
+                    </select>
                 </div>
-
                 <div className="nav-search">
                     <form onSubmit={handleSearchSubmit}>
                         <input

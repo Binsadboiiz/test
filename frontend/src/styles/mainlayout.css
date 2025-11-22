@@ -106,7 +106,7 @@
 }
 
 /* Nút trong sidebar */
-.side-bar-left .btn-group > div {
+.side-bar-left .btn-group {
   width: 100%;
   padding: 10px 12px;
   border-radius: 8px;
@@ -129,7 +129,7 @@
 }
 
 /* Hover chung cho tất cả button */
-.side-bar-left .btn-group > div:hover {
+.side-bar-left .btn-group:hover {
   background: #1f2937;
   color: #f9fafb;
   transform: translateX(2px);
@@ -158,13 +158,13 @@
 }
 
 /* khi collapsed: chỉ còn icon, ẩn chữ */
-.side-bar-left.collapsed .btn-group > div span,
+.side-bar-left.collapsed .btn-group span,
 .side-bar-left.collapsed .btn-out span {
   display: none;
 }
 
 /* khi collapsed: căn icon ra giữa cho đẹp */
-.side-bar-left.collapsed .btn-group > div,
+.side-bar-left.collapsed .btn-group,
 .side-bar-left.collapsed .btn-out,
 .side-bar-left.collapsed .btn-hidden {
   justify-content: center;

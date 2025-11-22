@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
+import HandleErrorAPI from "../utils/handleErrorAPI";
+import { useNavigate } from "react-router-dom";
 
-export default function UserManagement({ role }) {
+export default function UserManagement({ roles }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
     displayname: "",
     avatarUrl: "",
-    role: role || "user",
+    roles: roles || "user",
   });
 
   const [editingUserId, setEditingUserId] = useState(null);
@@ -21,9 +22,9 @@ export default function UserManagement({ role }) {
     try {
       const res = await fetch("http://localhost:3000/api/users");
       const data = await res.json();
-      setUsers(data.filter(u => u.role === role)); 
+      setUsers(data.filter(u => u.roles === roles)); 
     } catch (err) {
-      setError(err.message);
+      HandleErrorAPI(err, navigate, "Fetch Users")
     } finally {
       setLoading(false);
     }
@@ -31,7 +32,7 @@ export default function UserManagement({ role }) {
 
   useEffect(() => {
     loadUsers();
-  }, [role]);
+  }, [roles]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,13 +48,13 @@ export default function UserManagement({ role }) {
         body: JSON.stringify(formData),
       });
 
-      if (!res.ok) throw new Error("Failed to save user");
+      if (!res.ok) throw res;
 
-      setFormData({ username: "", displayname: "", email: "", password: "", avatarUrl: "", role });
+      setFormData({ username: "", displayname: "", email: "", password: "", avatarUrl: "", roles });
       setEditingUserId(null);
       loadUsers();
     } catch (err) {
-      setError(err.message);
+      HandleErrorAPI(err, navigate, "Save User");
     }
   };
 
@@ -64,7 +65,7 @@ export default function UserManagement({ role }) {
       password: "",
       displayname: user.displayname,
       avatarUrl: user.avatarUrl,
-      role: user.role,
+      roles: user.roles,
     });
     setEditingUserId(user._id);
   };
@@ -75,16 +76,15 @@ export default function UserManagement({ role }) {
       await fetch(`http://localhost:3000/api/users/${_id}`, { method: "DELETE" });
       loadUsers();
     } catch (err) {
-      alert("Delete failed");
+      HandleErrorAPI(err, navigate, "Delete User");
     }
   };
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="user-management">
-      <h2>{role === "publisher" ? "Publisher Management" : "User Management"}</h2>
+      <h2>{roles === "publisher" ? "Publisher Management" : "User Management"}</h2>
 
       <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
         <input
@@ -121,7 +121,7 @@ export default function UserManagement({ role }) {
             type="button"
             onClick={() => {
               setEditingUserId(null);
-              setFormData({ username: "", displayname: "", email: "", password: "", avatarUrl: "", role });
+              setFormData({ username: "", displayname: "", email: "", password: "", avatarUrl: "", roles });
             }}
           >
             Cancel
@@ -145,7 +145,7 @@ export default function UserManagement({ role }) {
               <td>{u.username}</td>
               <td>{u.displayname}</td>
               <td>{u.email}</td>
-              <td>{u.role}</td>
+              <td>{u.roles}</td>
               <td>
                 <button onClick={() => handleEditUser(u)}>Edit</button>
                 <button onClick={() => handleDeleteUser(u._id)}>Delete</button>

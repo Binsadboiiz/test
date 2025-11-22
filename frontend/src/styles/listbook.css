@@ -22,6 +22,10 @@
   color: #000;
 }
 
+.nav-filter {
+  gap: 10px;
+}
+
 .nav-filter select {
   padding: 6px 10px;
   border-radius: 4px;
