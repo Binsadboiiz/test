@@ -143,3 +143,72 @@ export async function searchBooks(req, res, next) {
     }
 };
 
+export async function getBookWithPagination(req, res, next) {
+    try {
+        let {
+            page = 1,
+            limit = 12,
+            search = "all",
+            genre = "all",
+            year,
+            minRating
+        } = req.body;
+
+        page = Number(page) || 1;
+        limit = Number(limit) || 12;
+
+        if(page < 1) page = 1
+        if(limit < 1) limit = 12;
+
+        const skip = (page - 1) * limit;
+
+        const filter = {};
+
+        if(search && search.trim() !== "") {
+            const keyword = search.trim();
+            filter.$or = [
+                {bookTitle: {$regex: keyword, $options: "i"}},
+                {bookAuthor: {$regex: keyword, $options: "i"}}
+            ]
+        };
+
+        if(genre && genre !== "all") {
+            filter.bookGenre = {$in: [new RegExp(`^${genre}$`, "i")]};
+        };
+
+        if(year) {
+            filter.bookPublicationYear = Number(year);
+        }
+
+        if(minRating) {
+            filter.averageRating = {$gte: Number(minRating)};
+        }
+
+        // query song song
+
+        const [books, totalItems, genres] = await Promise.all([
+            Book.find(filter)
+                .skip(skip)
+                .limit(limit)
+                .sort({createdAt: -1})
+                .populate("publisher_id", "pubName pubDescription"),
+
+                Book.countDocuments(filter),
+                Book.distinct("bookGenre")
+        ]);
+
+        const cleanGenres = (genres || []).filter(g=> g && g.trim() !== "");
+        const totalPages = Math.max(1, Math.ceil(totalItems / limit) || 1);
+
+        res.status(200).json({
+            ooks,
+            totalItems,
+            totalPages,
+            currentPage: page,
+            limit,
+            genres: cleanGenres
+        });
+    } catch (error) {
+        next(error);
+    }
+}
