@@ -148,11 +148,11 @@ export async function getBookWithPagination(req, res, next) {
         let {
             page = 1,
             limit = 12,
-            search = "all",
+            search = "",
             genre = "all",
             year,
             minRating
-        } = req.body;
+        } = req.query;
 
         page = Number(page) || 1;
         limit = Number(limit) || 12;
@@ -184,6 +184,9 @@ export async function getBookWithPagination(req, res, next) {
             filter.averageRating = {$gte: Number(minRating)};
         }
 
+        const years = await Book.distinct("bookPublicationYear");
+        years.sort((a, b) => b - a);
+
         // query song song
 
         const [books, totalItems, genres] = await Promise.all([
@@ -201,12 +204,13 @@ export async function getBookWithPagination(req, res, next) {
         const totalPages = Math.max(1, Math.ceil(totalItems / limit) || 1);
 
         res.status(200).json({
-            ooks,
+            books,
             totalItems,
             totalPages,
             currentPage: page,
             limit,
-            genres: cleanGenres
+            genres: cleanGenres,
+            years
         });
     } catch (error) {
         next(error);
