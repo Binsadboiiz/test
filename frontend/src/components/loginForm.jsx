@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/loginform.css";
 
 export default function LoginForm() {
@@ -10,6 +10,7 @@ export default function LoginForm() {
   const [successMsg, setSuccessMsg] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const naviagte = useNavigate();
 
   const handleChange = (e) => {
     const {name, value} = e.target;
@@ -40,6 +41,7 @@ export default function LoginForm() {
       }
 
       setSuccessMsg(data.message || "Đăng nhập thành công")
+      naviagte("/");
       
     } catch (err) {
       setError(err.message);
