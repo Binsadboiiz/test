@@ -10,6 +10,28 @@ export default function MainLayout() {
     JSON.parse(localStorage.getItem("user") || "null")
   );
 
+  const role = user?.role
+
+  const handleHome = () => {
+    if (role === "admin") {
+        navigate("/admin/dashboard");
+    } else if (role === "publisher"){
+      navigate("/pulisher/dashboard");
+    } else {
+      navigate("/")
+    }
+  }
+
+  const handleListBooks = () => {
+    if (role === "admin") {
+        navigate("/admin/books");
+    } else if (role === "publisher"){
+      navigate("/pulisher/books");
+    } else {
+      navigate("books")
+    }
+  }
+
   const handleLogout = async () => {
     try {
       await fetch("http://localhost:3000/api/users/logout", {
@@ -26,6 +48,7 @@ export default function MainLayout() {
   }
 
   return (
+    
     <>
       <header className="header-container">
         <div className="logo">
@@ -54,13 +77,13 @@ export default function MainLayout() {
           <i className="bi bi-list-ul"></i>
         </div>
 
-        <div className="btn-group">
+        <div className="btn-group" onClick={handleHome}>
           <div className="btn-home">
             <i className="bi bi-house"></i>
             <span>Home</span>
           </div>
         </div>
-        <div className="btn-group">
+        <div className="btn-group" onClick={handleListBooks}>
           <div className="btn-list">
             <i className="bi bi-journals"></i>
             <span>List Books</span>
