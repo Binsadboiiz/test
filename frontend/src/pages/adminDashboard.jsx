@@ -1,6 +1,7 @@
 import { useState } from "react";
 import UserManagement from "../components/userManagement";
 import BooksManagement from "../components/bookManagement";
+import "../styles/adminDashboard.css"
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("users");
@@ -10,10 +11,20 @@ export default function AdminDashboard() {
       <h1>Admin Dashboard</h1>
 
       <div className="tabs">
-        <button onClick={() => setActiveTab("users")}>Users</button>
-        <button onClick={() => setActiveTab("publishers")}>Publishers</button>
-        <button onClick={() => setActiveTab("books")}>Books</button>
-      </div>
+      <button 
+        className={activeTab === "publishers" ? "active" : ""} 
+        onClick={() => setActiveTab("publishers")}
+      >
+        Publishers
+      </button>
+      <button 
+        className={activeTab === "books" ? "active" : ""} 
+        onClick={() => setActiveTab("books")}
+      >
+        Books
+      </button>
+    </div>
+
 
       <div className="tab-content" style={{ marginTop: "20px" }}>
         {activeTab === "users" && <UserManagement role="user" />}

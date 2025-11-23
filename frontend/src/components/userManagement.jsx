@@ -1,154 +1,109 @@
 import { useEffect, useState } from "react";
-import HandleErrorAPI from "../utils/handleErrorAPI";
 import { useNavigate } from "react-router-dom";
+import "../styles/userManagement.css";
 
-export default function UserManagement({ roles }) {
-  const [users, setUsers] = useState([]);
+export default function PublisherManagement() {
+  const [publishers, setPublishers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [booksByPublisher, setBooksByPublisher] = useState({});
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-    displayname: "",
-    avatarUrl: "",
-    roles: roles || "user",
-  });
 
-  const [editingUserId, setEditingUserId] = useState(null);
-
-  const loadUsers = async () => {
+  // Load danh sách publishers
+  const loadPublishers = async () => {
     setLoading(true);
     try {
       const res = await fetch("http://localhost:3000/api/users");
       const data = await res.json();
-      setUsers(data.filter(u => u.roles === roles)); 
+      const nxb = data.filter(u => u.roles === "publisher");
+      setPublishers(nxb);
+
+      // Load sách của từng publisher
+      const booksRes = await fetch("http://localhost:3000/api/books");
+      const booksData = await booksRes.json();
+
+      const mapBooks = {};
+      nxb.forEach(pub => {
+        mapBooks[pub._id] = booksData.filter(b => b.publisher_id === pub._id);
+      });
+      setBooksByPublisher(mapBooks);
+
     } catch (err) {
-      HandleErrorAPI(err, navigate, "Fetch Users")
+      console.warn("Using mock data for test...");
+      const mockPublishers = [
+        {
+          _id: "1",
+          username: "john_doe",
+          displayname: "John Doe",
+          email: "john@gmail.com",
+          avatarUrl: "",
+          roles: "publisher",
+        },
+      ];
+      const mockBooks = [
+        { _id: "b1", title: "Book 1", publisher_id: "1" },
+        { _id: "b2", title: "Book 2", publisher_id: "1" },
+      ];
+      setPublishers(mockPublishers);
+      setBooksByPublisher({ "1": mockBooks });
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadUsers();
-  }, [roles]);
+    loadPublishers();
+  }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleDeletePublisher = async (publisherId) => {
+    if (!window.confirm("Are you sure you want to delete this publisher?")) return;
     try {
-      const method = editingUserId ? "PUT" : "POST";
-      const url = editingUserId
-        ? `http://localhost:3000/api/users/${editingUserId}`
-        : "http://localhost:3000/api/users";
-
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) throw res;
-
-      setFormData({ username: "", displayname: "", email: "", password: "", avatarUrl: "", roles });
-      setEditingUserId(null);
-      loadUsers();
+      await fetch(`http://localhost:3000/api/users/${publisherId}`, { method: "DELETE" });
+      loadPublishers();
     } catch (err) {
-      HandleErrorAPI(err, navigate, "Save User");
+      console.error("Error deleting publisher", err);
     }
   };
 
-  const handleEditUser = (user) => {
-    setFormData({
-      username: user.username,
-      email: user.email,
-      password: "",
-      displayname: user.displayname,
-      avatarUrl: user.avatarUrl,
-      roles: user.roles,
-    });
-    setEditingUserId(user._id);
-  };
-
-  const handleDeleteUser = async (_id) => {
-    if (!window.confirm("Are you sure to delete this user?")) return;
-    try {
-      await fetch(`http://localhost:3000/api/users/${_id}`, { method: "DELETE" });
-      loadUsers();
-    } catch (err) {
-      HandleErrorAPI(err, navigate, "Delete User");
-    }
+  const handleEditPublisher = (publisher) => {
+    navigate(`/admin/users/edit/${publisher._id}`);
   };
 
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="user-management">
-      <h2>{roles === "publisher" ? "Publisher Management" : "User Management"}</h2>
-
-      <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={formData.username}
-          onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Display Name"
-          value={formData.displayname}
-          onChange={(e) => setFormData({ ...formData, displayname: e.target.value })}
-          required
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-          required={!editingUserId}
-        />
-        <button type="submit">{editingUserId ? "Update" : "Add"}</button>
-        {editingUserId && (
-          <button
-            type="button"
-            onClick={() => {
-              setEditingUserId(null);
-              setFormData({ username: "", displayname: "", email: "", password: "", avatarUrl: "", roles });
-            }}
-          >
-            Cancel
-          </button>
-        )}
-      </form>
-
-      <table border={1} cellPadding={5} style={{ width: "100%" }}>
+    <div className="publisher-management">
+      <h2>Publisher Management</h2>
+      <table border={1} cellPadding={5} style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr>
-            <th>Username</th>
-            <th>Display Name</th>
+            <th>Avatar</th>
+            <th>Name</th>
             <th>Email</th>
-            <th>Role</th>
+            <th>Books</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {users.map((u) => (
-            <tr key={u._id}>
-              <td>{u.username}</td>
-              <td>{u.displayname}</td>
-              <td>{u.email}</td>
-              <td>{u.roles}</td>
+          {publishers.map(pub => (
+            <tr key={pub._id}>
               <td>
-                <button onClick={() => handleEditUser(u)}>Edit</button>
-                <button onClick={() => handleDeleteUser(u._id)}>Delete</button>
+                <img
+                  src={pub.avatarUrl || "/default-avt.jpg"}
+                  alt="avatar"
+                  onError={(e) => { e.target.src = "/default-avt.jpg"; }}
+                  style={{ width: "50px", height: "50px", borderRadius: "50%" }}
+                />
+              </td>
+              <td>{pub.displayname || pub.username}</td>
+              <td>{pub.email}</td>
+              <td>
+                {booksByPublisher[pub._id] && booksByPublisher[pub._id].length > 0
+                  ? booksByPublisher[pub._id].map(b => b.title).join(", ")
+                  : "No books"}
+              </td>
+              <td>
+                <button onClick={() => handleEditPublisher(pub)}>Edit</button>
+                <button onClick={() => handleDeletePublisher(pub._id)}>Delete</button>
               </td>
             </tr>
           ))}
