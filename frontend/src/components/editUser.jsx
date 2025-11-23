@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../styles/userManagement.css";
+import HandleErrorAPI from "../utils/handleErrorAPI";
 
 export default function EditPublisher() {
   const { publisherId } = useParams();
@@ -29,7 +30,7 @@ export default function EditPublisher() {
           avatarFile: null,
         });
       } catch (err) {
-        console.warn("Using mock data...");
+        HandleErrorAPI(err, navigate, "Faild to fetch")
         setFormData({
           username: "demo_user",
           displayname: "Demo Publisher",

@@ -81,7 +81,7 @@ export default function MainLayout() {
 
         {/* Favorites only for reader/publisher */}
         {(roles.includes("user") || roles.includes("publisher")) && (
-          <div className="btn-group">
+          <div className="btn-group" onClick={()=> navigate('/favorites')}>
             <i className="bi bi-heart"></i>
             <span>Favorites Books</span>
           </div>

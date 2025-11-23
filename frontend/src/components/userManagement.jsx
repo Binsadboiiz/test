@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/userManagement.css";
+import HandleErrorAPI from "../utils/handleErrorAPI";
 
 export default function PublisherManagement() {
   const [publishers, setPublishers] = useState([]);
@@ -28,7 +29,7 @@ export default function PublisherManagement() {
       setBooksByPublisher(mapBooks);
 
     } catch (err) {
-      console.warn("Using mock data for test...");
+      HandleErrorAPI(err, navigate, "User Manament has an error (fail to fetch)")
       const mockPublishers = [
         {
           _id: "1",
