@@ -88,7 +88,7 @@ export default function MainLayout() {
         )}
 
         {/* Threads for all */}
-        <div className="btn-group">
+        <div className="btn-group" onClick={()=> navigate('/forum')}>
           <i className="bi bi-threads"></i>
           <span>Threads</span>
         </div>
