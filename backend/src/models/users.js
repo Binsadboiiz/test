@@ -41,10 +41,11 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    favoriteBooks: {
-        type: String,
-        default: ""
-    }
+    favoriteBooks: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Book',
+        default: []
+    }]
 }, {timestamps: true});
 
 const User = mongoose.model("User", UserSchema);

@@ -6,8 +6,11 @@ import {
     getUserById,
     editUser,
     deleteUser,
-    logoutUser
+    logoutUser,
+    getMyFavoriteBooks
  } from '../controllers/userController.js';
+ import authMiddleware from "../middlewares/authMiddleware.js";
+
 
  const routerUser = express.Router();
 
@@ -17,6 +20,7 @@ import {
 
  routerUser.get('/', getAllUsers);
  routerUser.get('/:id', getUserById);
+ routerUser.get('/my-favorite-books', authMiddleware, getMyFavoriteBooks);
  routerUser.put('/:id', editUser);
  routerUser.delete('/:id', deleteUser);
 

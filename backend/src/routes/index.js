@@ -2,11 +2,13 @@
 import routerUser from "./userRoutes.js";
 import { notFound, handleError } from "./error.js";
 import routerBook from "./bookRoutes.js";
+import routerForum from "./forumRoutes.js";
 
 const router = (app) => {
 
     app.use('/api/users', routerUser);
     app.use('/api/books', routerBook);
+    app.use('/api/threads', routerForum);
     app.get('/', (req, res)=>{
         res.send("API is Working");
     })

@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import User from '../models/users.js';
+import Book from '../models/books.js';
 import ErrorApi from '../middlewares/handleError.js';
 import jwt from 'jsonwebtoken';
 
@@ -68,13 +69,15 @@ export async function loginUser(req, res, next) {
             throw new ErrorApi("Wrong account or password", 401);
         }
 
-        if(user.isBlocked === true) {
+        if(user.isBlocked) {
             throw new ErrorApi("Account is blocked", 403);
         }
 
         const token = jwt.sign(
             { 
                 _id: user._id, 
+                username: user.username,
+                displayname: user.displayname,
                 roles: user.roles 
             },
             process.env.JWT_SECRET,
@@ -88,6 +91,7 @@ export async function loginUser(req, res, next) {
             displayname: user.displayname,
             avatarUrl: user.avatarUrl,
             roles: user.roles,
+            isBlocked: user.isBlocked
         };
 
         //set cookie để lưu token
@@ -189,3 +193,28 @@ export async function deleteUser(req, res, next) {
         next(error);
     }
 };
+
+export async function getMyFavoriteBooks(req, res, next) {
+    try {
+        const userId = req.user._id;
+
+        const user = await User.findById(userId)
+                .select("favoriteBooks")
+                .populate({
+                    path: "favoriteBooks",
+                    populate: {
+                        path: "publisher_id",
+                        select: "pubName pubDescription"
+                    }
+                });
+
+        if(!user) throw new ErrorApi("User not found", 404);
+
+        res.json({
+            count: user.favoriteBooks.length,
+            results: user.favoriteBooks
+        });
+    } catch (error) {
+        next(error);
+    }
+}

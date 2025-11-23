@@ -166,6 +166,71 @@ const getAllBookAdmin = async (req, res, next) => {
     };
 }
 
+function ensureAdmin(req) {
+    const roles = req.user?.roles || [];
+    if(!roles.includes("admin")) throw new ErrorApi("Unauthorized", 403);
+}
+
+const banUser = async (req, res, next) => {
+    try {
+        ensureAdmin(req);
+
+        const {id} = req.params;
+
+        if(String(req.user._id) === String(id)) {
+            throw new ErrorApi("Cannot ban yourself", 400);
+        }
+
+        const user = await User.findById(id);
+
+        if(!user) throw new ErrorApi("User not found", 404);
+
+        if(user.isBlocked) {
+            return res.json({
+                message: "User đã bị khóa",
+                user
+            });
+        }
+
+        user.isBlocked = true;
+        await user.save();
+
+        res.json({
+            message: `Đã khóa tài khoản ${user.username}`,
+            user,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+const unbanUser = async (req, res, next) => {
+    try {
+        ensureAdmin(req);
+        const {id} = req.params;
+
+        const user = await User.findById(id);
+        if (!user) throw new ErrorApi("User không tồn tại", 404);
+
+        if(!user.isBlocked) {
+            return res.json({
+                message: "User này không bị khóa",
+                user,
+            });
+        }
+
+        user.isBlocked = false;
+        await user.save();
+
+        res.json({
+            message: `Đã mở khóa tài khoản ${user.username}`,
+            user,
+        })
+    } catch (error) {
+        next();
+    }
+}
+
 export default {
     loginAdmin,
     addPublisher,
@@ -173,5 +238,7 @@ export default {
     updatePublisher,
     deletePublisher,
     getAllUserAdmin,
-    getAllBookAdmin
+    getAllBookAdmin,
+    banUser,
+    unbanUser
 };
