@@ -5,7 +5,6 @@ import ErrorApi from '../middlewares/handleError.js';
 import jwt from 'jsonwebtoken';
 import { mailTransporter } from "../config/mail.js";
 import crypto from 'crypto';
-import { throwDeprecation } from 'process';
 
 
 
