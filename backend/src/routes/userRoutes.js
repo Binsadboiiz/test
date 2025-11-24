@@ -16,15 +16,18 @@ import {
 
  const routerUser = express.Router();
 
- routerUser.post('/register', registerUser);
- routerUser.post('/login', loginUser);
- routerUser.post('logout', logoutUser);
  routerUser.post('/forgot-password', forgotPassword);
  routerUser.post('/reset-password', resetPassword);
 
+ routerUser.post('/register', registerUser);
+ routerUser.post('/login', loginUser);
+ routerUser.post('logout', logoutUser);
+ 
+
  routerUser.get('/', getAllUsers);
- routerUser.get('/:id', getUserById);
  routerUser.get('/my-favorite-books', authMiddleware, getMyFavoriteBooks);
+
+ routerUser.get('/:id', getUserById);
  routerUser.put('/:id', editUser);
  routerUser.delete('/:id', deleteUser);
 
