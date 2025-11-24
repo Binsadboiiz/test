@@ -1,6 +1,6 @@
 import express from "express";
 import publisherController from "../controllers/publisherController.js";
-import verifyToken from "../middlewares/verifyToken.js";
+import { verifyToken } from "../middlewares/verifyToken.js";
 
 const routerPublisher = express.Router();
 

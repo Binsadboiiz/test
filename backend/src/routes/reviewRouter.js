@@ -6,7 +6,7 @@ import {
     getReviewsByBook
 } from "../controllers/reviewController.js";
 
-import verifyToken from "../middlewares/verifyToken.js";
+import { verifyToken } from "../middlewares/verifyToken.js";
 
 const routerReview = express.Router();
 

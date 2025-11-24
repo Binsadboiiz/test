@@ -1,4 +1,4 @@
-import Review from '../models/reviews.js';
+import Review from '../models/review.js';
 import Book from '../models/books.js';
 import ErrorApi from '../middlewares/handleError.js';
 

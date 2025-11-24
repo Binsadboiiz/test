@@ -14,7 +14,7 @@ export const verifyToken = (req, res, next) => {
     const token = authHeader.split(" ")[1]; 
 
     if (!token) {
-        return next(new ErrorApi("Token format is invalid", 403));
+        return next(new ErrorApi("Token format is invalid", 403));  
     }
 
     // Dùng key từ .env để giải mã
