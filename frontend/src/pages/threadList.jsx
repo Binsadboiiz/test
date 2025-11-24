@@ -38,7 +38,7 @@ export default function ThreadList() {
                     ...prev,
                     loading: false,
                     error: error.message || "Không load được threads",
-                }));''
+                }));
             }
         };
         loadThreads();
@@ -112,7 +112,7 @@ export default function ThreadList() {
 
             {!state.loading && 
             state.threads.length > 0 && 
-            state.threads.map((thread) => {
+            state.threads.map((thread) => (
                 <div className="feed-card post-card" onClick={()=> handleOpenThread(thread._id)}>
                     <div className="post-header">
                         <div className="avatar-circle">{thread.author?.displayname ?
@@ -160,7 +160,7 @@ export default function ThreadList() {
                         </div>
                     </div>
                 </div>
-            })}
+            ))}
         </div>
     )
 }

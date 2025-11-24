@@ -4,7 +4,8 @@ import { getAllBooks,
         createBook,
         editBook,
         deleteBook,
-        getBookWithPagination
+        getBookWithPagination,
+        getTopRateBooks
  } from '../controllers/bookController.js';
 
  const routerBook = express.Router();
@@ -12,6 +13,7 @@ import { getAllBooks,
  routerBook.post('/', createBook);
  routerBook.get('/', getAllBooks);
  routerBook.get('/filter', getBookWithPagination);
+ routerBook.get('/top-rate', getTopRateBooks);
  routerBook.get('/:id', getBookById);
  routerBook.put('/:id', editBook);
  routerBook.delete('/:id', deleteBook);

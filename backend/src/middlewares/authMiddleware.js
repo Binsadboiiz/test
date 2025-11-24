@@ -1,34 +1,29 @@
-import jwt from 'jsonwebtoken';
-import ErrorApi from '../middlewares/handleError.js';
+// middlewares/authMiddleware.js
+import jwt from "jsonwebtoken";
+import User from "../models/users.js";
+import ErrorApi from "./handleError.js";
 
-
-export default function authMiddleware(req, res, next) {
-    try {
-        let token;
-
-        if(req.cookie && req.cookie.token) {
-            token = req.cookie.token;
-        }
-
-        if(!token) {
-            const authHeader = req.headers.authorization;
-            if(authHeader && authHeader.startsWith("Bearer")) {
-                token = authHeader.split(" ")[1]
-            }
-        }
-
-        if(!token) throw new ErrorApi("Missing authentication token", 401);
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = {
-            _id: decoded._id,
-            username: decoded.username,
-            displayname: decoded.displayname,
-            roles: decoded.roles
-        }
-        next();
-    } catch (error) {
-        if(error.name === "JsonWebTokenError" || error.name === "TokenExpiredError")
-            return next(new ErrorApi("Invalid token", 401));
-        next(error);
+export default async function authMiddleware(req, res, next) {
+  try {
+    const token = req.cookies?.token;
+    if (!token) {
+      throw new ErrorApi("Not authenticated", 401);
     }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await User.findById(decoded._id).select("-password -passwordOld");
+    if (!user) {
+      throw new ErrorApi("User not found", 404);
+    }
+
+    req.user = user;
+    next();
+  } catch (err) {
+    // lỗi token
+    if (err.name === "JsonWebTokenError" || err.name === "TokenExpiredError") {
+      return next(new ErrorApi("Invalid or expired token", 401));
+    }
+    next(err);
+  }
 }

@@ -5,18 +5,19 @@ import {
     deleteReview,
     getReviewsByBook
 } from "../controllers/reviewController.js";
+import authMiddleware from "../middlewares/authMiddleware.js";
 
-import { verifyToken } from "../middlewares/verifyToken.js";
 
 const routerReview = express.Router();
 
+
+routerReview.post("/", authMiddleware, addReview);
+
 routerReview.get("/book/:bookId", getReviewsByBook);
 
-routerReview.post("/", verifyToken, addReview);
+routerReview.put("/:id", authMiddleware , updateReview);
 
-routerReview.put("/:id", verifyToken, updateReview);
-
-routerReview.delete("/:id", verifyToken, deleteReview);
+routerReview.delete("/:id", authMiddleware, deleteReview);
 
 
 export default routerReview;

@@ -70,7 +70,7 @@ export default function ThreadDetail() {
                 actionError: "",
             }));
 
-            const data = await addReplyToThread(id, state.replyContent.trim());
+            const data = await addReplyToThread(state.thread._id, state.replyContent.trim());
 
             setState(prev => ({
                 ...prev,

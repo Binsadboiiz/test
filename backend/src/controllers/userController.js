@@ -99,9 +99,9 @@ export async function loginUser(req, res, next) {
 
         //set cookie để lưu token
         res.cookie("token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            httpOnly: false,
+            secure: false,
+            sameSite: "lax",
             maxAge: 24 * 60 * 60 * 1000 //1 ngày
         });
 
@@ -198,29 +198,34 @@ export async function deleteUser(req, res, next) {
 };
 
 export async function getMyFavoriteBooks(req, res, next) {
-    try {
-        const userId = req.user._id;
+  try {
+    const userId = req.user._id;
 
-        const user = await User.findById(userId)
-                .select("favoriteBooks")
-                .populate({
-                    path: "favoriteBooks",
-                    populate: {
-                        path: "publisher_id",
-                        select: "pubName pubDescription"
-                    }
-                });
+    const user = await User.findById(userId)
+      .select("favoriteBooks")
+      .populate({
+        path: "favoriteBooks",
+        populate: {
+          path: "publisher_id",
+          select: "pubName pubDescription",
+        },
+      });
 
-        if(!user) throw new ErrorApi("User not found", 404);
+    if (!user) throw new ErrorApi("User not found", 404);
 
-        res.json({
-            count: user.favoriteBooks.length,
-            results: user.favoriteBooks
-        });
-    } catch (error) {
-        next(error);
-    }
-};
+    const favBooks = Array.isArray(user.favoriteBooks)
+      ? user.favoriteBooks
+      : [];
+
+    res.json({
+      count: favBooks.length,
+      results: favBooks,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 
 export async function forgotPassword(req, res, next) {
     try {
@@ -301,4 +306,79 @@ export async function resetPassword(req, res, next) {
     } catch (error) {
         next(error);
     }
+}
+
+export async function addFavoriteBook(req, res, next) {
+  try {
+    if (!req.user || !req.user._id) {
+      throw new ErrorApi("Not authenticated", 401);
+    }
+
+    const userId = req.user._id;
+    const { bookId } = req.params;
+
+    if (!bookId) throw new ErrorApi("Book ID is required", 400);
+
+    const user = await User.findById(userId);
+    if (!user) throw new ErrorApi("User not found", 404);
+
+    const book = await Book.findById(bookId);
+    if (!book) throw new ErrorApi("Book not found", 404);
+
+    if (!Array.isArray(user.favoriteBooks)) {
+      user.favoriteBooks = [];
+    }
+
+    const exists = user.favoriteBooks.some(
+      (id) => id.toString() === bookId.toString()
+    );
+
+    if (exists) {
+      return res.status(200).json({
+        message: "Book already in favorites",
+        favoriteBooks: user.favoriteBooks,
+      });
+    }
+
+    user.favoriteBooks.push(bookId);
+    await user.save();
+
+    res.status(201).json({
+      message: "Book added to favorites",
+      favoriteBooks: user.favoriteBooks,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function removeFavoriteBook(req, res, next) {
+  try {
+    if (!req.user || !req.user._id) {
+      throw new ErrorApi("Not authenticated", 401);
+    }
+
+    const userId = req.user._id;
+    const { bookId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user) throw new ErrorApi("User not found", 404);
+
+    if (!Array.isArray(user.favoriteBooks)) {
+      user.favoriteBooks = [];
+    }
+
+    user.favoriteBooks = user.favoriteBooks.filter(
+      (id) => id.toString() !== bookId.toString()
+    );
+
+    await user.save();
+
+    res.json({
+      message: "Book removed from favorites",
+      favoriteBooks: user.favoriteBooks,
+    });
+  } catch (error) {
+    next(error);
+  }
 }

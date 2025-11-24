@@ -1,80 +1,210 @@
+/* ===== FILTER + SEARCH ===== */
+
 .nav-fields {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 16px;
-  gap: 12px;
-}
-
-.nav-search input {
-  padding: 6px 10px;
-  border-radius: 4px;
-  border: none;
-  outline: none;
-  color: black;
-}
-
-.nav-search button {
-  margin-left: 8px;
-  padding: 6px 12px;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  color: #000;
+  align-items: center;
+  margin-bottom: 18px;
+  gap: 16px;
 }
 
 .nav-filter {
+  display: flex;
   gap: 10px;
 }
 
 .nav-filter select {
-  padding: 6px 10px;
-  border-radius: 4px;
-  border: none;
-  color: #000;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #111827;
+  font-size: 14px;
+  outline: none;
 }
 
-/* Grid 12 cuốn (3 cột x 4 hàng nếu màn đủ rộng) */
+.nav-filter select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}
+
+.nav-search form {
+  display: flex;
+  align-items: center;
+}
+
+.nav-search input {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  outline: none;
+  background: #ffffff;
+  min-width: 220px;
+  font-size: 14px;
+}
+
+.nav-search input::placeholder {
+  color: #9ca3af;
+}
+
+.nav-search input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}
+
+.nav-search button {
+  margin-left: 10px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #6366f1, #ec4899);
+  color: #f9fafb;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.nav-search button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(148, 163, 184, 0.6);
+}
+
+/* ===== LIST + GRID ===== */
+
+.book-list {
+  margin-top: 4px;
+}
+
 .book-container {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
+  gap: 20px;
 }
 
-/* Card sách */
+/* ===== BOOK CARD – LIGHT MODE ===== */
+
 .book-card {
-  background: #111827;
-  border-radius: 8px;
-  padding: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 10px 25px rgba(148, 163, 184, 0.35);
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.book-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 35px rgba(148, 163, 184, 0.6);
+  border-color: #c7d2fe;
+}
+
+/* Ảnh bìa */
+.book-cover {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f3f4f6;
 }
 
 .book-cover img {
   width: 100%;
-  height: 180px;
+  height: 190px;
   object-fit: cover;
-  border-radius: 6px;
+  display: block;
+}
+
+/* Info */
+.book-info {
+  padding: 10px 4px 4px;
 }
 
 .book-title {
   font-size: 16px;
-  font-weight: 600;
-  margin-top: 8px;
+  font-weight: 700;
+  margin-top: 4px;
+  color: #111827;
 }
 
 .book-author {
   font-size: 14px;
-  opacity: 0.8;
+  margin-top: 4px;
+  color: #6b7280;
 }
 
-/* Pagination */
+.book-genre {
+  font-size: 13px;
+  margin-top: 6px;
+  font-weight: 600;
+  color: #4f46e5;
+}
+
+/* Loading + empty */
+.loading,
+.no-book {
+  margin: 20px 0;
+  text-align: center;
+  font-size: 15px;
+  color: #4b5563;
+}
+
+/* ===== PAGINATION ===== */
+
 .pagination {
-  margin-top: 16px;
+  margin-top: 18px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+}
+
+.pagination button {
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 14px;
+  color: #111827;
+  transition: background 0.15s ease, transform 0.1s ease, opacity 0.15s ease;
+}
+
+.pagination button:hover:not([disabled]) {
+  background: #e5e7eb;
+  transform: translateY(-1px);
 }
 
 .pagination button[disabled] {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
+}
+
+.page-info {
+  font-size: 14px;
+  color: #4b5563;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 1024px) {
+  .book-container {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-fields {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .book-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .book-container {
+    grid-template-columns: 1fr;
+  }
 }

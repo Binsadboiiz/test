@@ -9,19 +9,23 @@ import {
     logoutUser,
     getMyFavoriteBooks,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    addFavoriteBook,
+    removeFavoriteBook
  } from '../controllers/userController.js';
  import authMiddleware from "../middlewares/authMiddleware.js";
 
 
  const routerUser = express.Router();
-
+ 
+ routerUser.post('/my-favorite-books/:bookId', authMiddleware, addFavoriteBook);
  routerUser.post('/forgot-password', forgotPassword);
  routerUser.post('/reset-password', resetPassword);
 
  routerUser.post('/register', registerUser);
  routerUser.post('/login', loginUser);
- routerUser.post('logout', logoutUser);
+ routerUser.post('/logout', logoutUser);
+
  
 
  routerUser.get('/', getAllUsers);
@@ -30,5 +34,6 @@ import {
  routerUser.get('/:id', getUserById);
  routerUser.put('/:id', editUser);
  routerUser.delete('/:id', deleteUser);
+ routerUser.delete('/my-favorite-books/:bookId', authMiddleware, removeFavoriteBook);
 
  export default routerUser;

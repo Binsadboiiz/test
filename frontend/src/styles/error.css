@@ -45,6 +45,12 @@
   font-size: 15px;
   margin-bottom: 4px;
   opacity: 0.8;
+  color: white;
+}
+
+.error-status span,
+.error-from span {
+  color: red;
 }
 
 .error-actions {

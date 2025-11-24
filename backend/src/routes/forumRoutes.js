@@ -9,7 +9,7 @@ routerForum.get('/', getThreads);
 routerForum.get('/:id', getThreadDetails);
 
 routerForum.post('/', authMiddleware,  checkNotBloacked, createThread);
-routerForum.post('/:id/relies', authMiddleware, checkNotBloacked ,addReply);
+routerForum.post('/:id/replies', authMiddleware, checkNotBloacked ,addReply);
 routerForum.delete('/:id', authMiddleware, checkNotBloacked , deleteThread);
 
 export default routerForum;

@@ -15,6 +15,7 @@ import ThreadDetail from "./components/threadDetail";
 import FavoriteBooksPage from "./pages/favoriteBooks";
 import ForgotPassword from "./components/forgotPasswordPage";
 import ResetPassword from "./components/resetPasswordPage";
+import BookDetail from "./components/bookDetail";
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
           <Route path='/forum/threads/new' element={<CreateThread />}></Route>
           <Route path='/forum/threads/:id' element={<ThreadDetail />}></Route>
           <Route path='/favorites' element={<FavoriteBooksPage />}></Route>
+          <Route path="books/:id" element={<BookDetail />} />
         </Route>
         <Route path='/register' element={<RegisterForm/>}/>
         <Route path='/login' element={<LoginForm/>}/>

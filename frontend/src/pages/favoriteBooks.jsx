@@ -59,9 +59,9 @@ export default function FavoriteBooksPage() {
         <div className="favorite-page">
             <h1>Favorite Books</h1>
             <div className="book-gird">{books.map((book) => (
-                <div key={book.id} className="book-card" onClick={()=> handleGoDetail(book._id)}>
-                    <div className="thumb-wrapper">{book.thumbailUrl ? (
-                        <img src={book.thumbailUrl} alt={book.bookTitle} />
+                <div key={book._id} className="book-card" onClick={()=> handleGoDetail(book._id)}>
+                    <div className="thumb-wrapper">{book.thumbnailUrl ? (
+                        <img src={book.thumbnailUrl} alt={book.bookTitle} />
                     ) : (
                         <div className="thumb-placeholder">No Image</div>
                     )}

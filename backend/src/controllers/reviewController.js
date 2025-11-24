@@ -2,11 +2,9 @@ import Review from '../models/review.js';
 import Book from '../models/books.js';
 import ErrorApi from '../middlewares/handleError.js';
 
-// 1. Thêm Review
+
 export async function addReview(req, res, next) {
     try {
-        // Giả sử bạn đã có middleware xác thực gán user vào req.user
-        // Nếu chưa, bạn cần lấy userId từ body (nhưng cách này không bảo mật)
         const userId = req.user._id; 
         const { bookId, rating, feedbackText } = req.body;
 
@@ -17,8 +15,8 @@ export async function addReview(req, res, next) {
         if (!book) throw new ErrorApi("Book not found", 404);
 
         // Check xem user đã review chưa (Ngăn spam)
-        const existingReview = await Review.findOne({ user_id: userId, book_id: bookId });
-        if (existingReview) throw new ErrorApi("You have already reviewed this book", 409);
+        // const existingReview = await Review.findOne({ user_id: userId, book_id: bookId });
+        // if (existingReview) throw new ErrorApi("You have already reviewed this book", 409);
 
         const newReview = await Review.create({
             user_id: userId,
@@ -27,20 +25,34 @@ export async function addReview(req, res, next) {
             feedbackText
         });
 
-        res.status(201).json({ message: "Review added successfully", review: newReview });
+        const allReviews = await Review.find({ book_id: bookId });
+
+        const totalRating = allReviews.reduce((sum, r) => sum + r.rating, 0);
+        const numOfReviews = allReviews.length;
+        const averageRating = numOfReviews > 0 ? totalRating / numOfReviews : 0;
+
+        book.averageRating = averageRating;
+        book.numOfReviews = numOfReviews;
+        await book.save();
+
+       res.status(201).json({
+            message: "Review added successfully",
+            review: newReview,
+            averageRating,
+            numOfReviews
+            });
     } catch (error) {
         next(error);
     }
 };
 
-// 2. Sửa Review
+
 export async function updateReview(req, res, next) {
     try {
         const userId = req.user._id;
-        const { id } = req.params; // ID của Review
+        const { id } = req.params; 
         const { rating, feedbackText } = req.body;
 
-        // Tìm và update (cần check user_id để đảm bảo chính chủ)
         const review = await Review.findOneAndUpdate(
             { _id: id, user_id: userId },
             { rating, feedbackText },
@@ -55,7 +67,6 @@ export async function updateReview(req, res, next) {
     }
 };
 
-// 3. Xóa Review
 export async function deleteReview(req, res, next) {
     try {
         const userId = req.user._id;
@@ -71,13 +82,13 @@ export async function deleteReview(req, res, next) {
     }
 };
 
-// 4. Lấy danh sách Review của 1 cuốn sách (Public)
+
 export async function getReviewsByBook(req, res, next) {
     try {
         const { bookId } = req.params;
         const reviews = await Review.find({ book_id: bookId })
-            .populate('user_id', 'displayname avatarUrl') // Chỉ lấy tên và avatar người comment
-            .sort({ createdAt: -1 }); // Mới nhất lên đầu
+            .populate('user_id', 'displayname avatarUrl') 
+            .sort({ createdAt: -1 }); 
 
         res.json(reviews);
     } catch (error) {

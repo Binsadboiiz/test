@@ -216,3 +216,24 @@ export async function getBookWithPagination(req, res, next) {
         next(error);
     }
 }
+
+
+export async function getTopRateBooks(req, res, next) {
+    try {
+        let { limit = 10 } = req.query;
+        limit = Number(limit) || 10;
+
+        const books = await Book.find({
+                averageRating: {$gt: 0}
+          }).sort({ averageRating: -1, numOfReviews: -1, createdAt: -1 })
+            .limit(limit)
+            .populate("publisher_id", "pubName pubDescription");
+
+        return res.status(200).json({
+            books,
+            count: books.length
+        });
+    } catch (error) {
+        next(error);
+    }
+}
