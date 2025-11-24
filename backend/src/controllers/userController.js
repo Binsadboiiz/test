@@ -3,6 +3,10 @@ import User from '../models/users.js';
 import Book from '../models/books.js';
 import ErrorApi from '../middlewares/handleError.js';
 import jwt from 'jsonwebtoken';
+import { mailTransporter } from "../config/mail.js";
+import crypto from 'crypto';
+import { throwDeprecation } from 'process';
+
 
 
 export async function registerUser(req, res, next) {
@@ -213,6 +217,87 @@ export async function getMyFavoriteBooks(req, res, next) {
         res.json({
             count: user.favoriteBooks.length,
             results: user.favoriteBooks
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export async function forgotPassword(req, res, next) {
+    try {
+        const { email } = req.body;
+
+        if(!email) throw new ErrorApi("Email is required", 400);
+
+        const user = await User.findOne({email});
+
+        if(!user) return res.json({message: "If this email exists, we sent a reset link"});
+
+        const resetToken = crypto.randomBytes(32).toString("hex");
+        const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+        user.resetPasswordToken = hashedToken;
+        user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
+        await user.save();
+
+        const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}&email=${encodeURIComponent(email)}`;
+
+        await mailTransporter.sendMail({
+            from: `"BookVerse" <${process.env.EMAIL_USER}>`,
+            to: email,
+            subject: "Reset your Password",
+            html: `<div style="font-family: Arial; padding: 16px;">
+          <h2>Reset your password</h2>
+          <p>Click the link below to reset your password (valid for 15 minutes):</p>
+          <a href="${resetLink}" 
+             style="display: inline-block; 
+                    padding: 10px 14px;
+                    background-color: #007bff;
+                    color: white; 
+                    border-radius: 6px;
+                    text-decoration: none;">
+            Reset Password
+          </a>
+          <p>If you didn’t request this, just ignore the email.</p>
+        </div>`
+        });
+
+        res.json({
+            message: "Password reset email sent"
+        })
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+export async function resetPassword(req, res, next) {
+    try {
+        const {email, token, password} = req.body;
+
+        if(!email || !token || !password) throw new ErrorApi("All fields are required", 400);
+
+        const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+        const user = await User.findOne({
+            email,
+            resetPasswordToken: hashedToken,
+            resetPasswordExpires: {$gt: Date.now()}
+        });
+
+        if(!user) throw new ErrorApi("Invalid or expired token", 400);
+
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        user.password = hashedPassword;
+        user.resetPasswordToken = null;
+        user.resetPasswordExpires = null;
+
+        await user.save();
+
+        res.json({
+            message: "Password reset successfully"
         });
     } catch (error) {
         next(error);

@@ -7,7 +7,9 @@ import {
     editUser,
     deleteUser,
     logoutUser,
-    getMyFavoriteBooks
+    getMyFavoriteBooks,
+    forgotPassword,
+    resetPassword
  } from '../controllers/userController.js';
  import authMiddleware from "../middlewares/authMiddleware.js";
 
@@ -16,7 +18,9 @@ import {
 
  routerUser.post('/register', registerUser);
  routerUser.post('/login', loginUser);
- routerUser.post('logout', logoutUser)
+ routerUser.post('logout', logoutUser);
+ routerUser.post('/forgot-password', forgotPassword);
+ routerUser.post('/reset-password', resetPassword);
 
  routerUser.get('/', getAllUsers);
  routerUser.get('/:id', getUserById);
