@@ -13,6 +13,8 @@ import ThreadList from "./pages/threadList";
 import CreateThread from "./pages/createThread";
 import ThreadDetail from "./components/threadDetail";
 import FavoriteBooksPage from "./pages/favoriteBooks";
+import ForgotPassword from "./components/forgotPasswordPage";
+import ResetPassword from "./components/resetPasswordPage";
 
 
 function App() {
@@ -30,6 +32,8 @@ function App() {
         </Route>
         <Route path='/register' element={<RegisterForm/>}/>
         <Route path='/login' element={<LoginForm/>}/>
+        <Route path='/forgot-password' element={<ForgotPassword />}/>
+        <Route path='/reset-password' element={<ResetPassword />}/>
         <Route path='/error' element={<ErrorPage/>} />
       </Routes>
   )
