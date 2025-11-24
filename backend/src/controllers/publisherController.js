@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import User from '../models/users.js';
 import Publisher from '../models/publisher.js';
 import Book from '../models/books.js';
-import Review from '../models/reviews.js';
+import Review from '../models/review.js';
 import ErrorApi from '../middlewares/handleError.js';
 import jwt from 'jsonwebtoken';
 
