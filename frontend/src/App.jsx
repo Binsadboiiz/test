@@ -4,7 +4,7 @@ import LoginForm from "./components/loginForm";
 import RegisterForm from "./components/registerForm";
 import HomePage from "./pages/home";
 import AdminDashboard from "./pages/adminDashboard";
-
+import BooksManagement from "./components/bookManagement";
 import EditUser from "./components/editUser";
 import MainLayout from "./layout/mainlayout";
 import BookList from "./pages/bookList";
@@ -24,6 +24,7 @@ function App() {
           <Route path='/' element={<HomePage/>}/>
           <Route path='/admin/dashboard' element={<AdminDashboard/>}/>
           <Route path='/admin/users/edit/:userId' element={<EditUser/>}/>
+          <Route path='/admin/books/edit/:id' element={<BooksManagement/>}/>
           <Route path='/books' element={<BookList/>}/>
           <Route path='forum' element={<ThreadList />}></Route>
           <Route path='/forum/threads/new' element={<CreateThread />}></Route>
