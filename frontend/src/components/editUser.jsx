@@ -7,9 +7,11 @@ export default function EditPublisher() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    username: "",
-    displayname: "",
-    email: "",
+    pubName: "",
+    pubAddress: "",
+    pubPhone: "",
+    pubEmail: "",
+    pubDescription: "",
     roles: "publisher",
     avatarUrl: "",
     avatarFile: null,
@@ -21,9 +23,11 @@ export default function EditPublisher() {
         const res = await fetch(`http://localhost:3000/api/users/${publisherId}`);
         const data = await res.json();
         setFormData({
-          username: data.username,
-          displayname: data.displayname,
-          email: data.email,
+          pubName: data.pubName,
+          pubAddress: data.pubAddress,
+          pubPhone: data.pubPhone,
+          pubEmail: data.pubEmail,
+          pubDescription: data.pubDescription,
           roles: data.roles || "publisher",
           avatarUrl: data.avatarUrl,
           avatarFile: null,
@@ -31,12 +35,16 @@ export default function EditPublisher() {
       } catch (err) {
         console.warn("Using mock data...");
         setFormData({
-          username: "demo_user",
-          displayname: "Demo Publisher",
-          email: "demo@gmail.com",
-          roles: "publisher",
+          _id: "1",
+          pubName: "john doe",
+          pubAddress: "somewhere",
+          pubPhone: 123456789,
+          displayname: "John Doe",
+          pubEmail: "john@gmail.com",
+          pubDescription: "no bio yet",
           avatarUrl: "",
-          avatarFile: null,
+          roles: "publisher",
+          avatarFile: null
         });
       }
     };
@@ -58,9 +66,11 @@ export default function EditPublisher() {
     e.preventDefault();
     try {
       const formPayload = new FormData();
-      formPayload.append("username", formData.username);
-      formPayload.append("displayname", formData.displayname);
-      formPayload.append("email", formData.email);
+      formPayload.append("pubName", formData.pubName);
+      formPayload.append("pubAddress", formData.pubAddress);
+      formPayload.append("pubPhone", formData.pubPhone);
+      formPayload.append("pubEmail", formData.pubEmail);
+      formPayload.append("pubDescription", formData.pubDescription);
       formPayload.append("roles", formData.roles);
       if (formData.avatarFile) formPayload.append("avatar", formData.avatarFile);
 
@@ -95,27 +105,41 @@ export default function EditPublisher() {
         {/* Username */}
         <input
           type="text"
-          placeholder="Username"
-          value={formData.username}
-          onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+          placeholder="Publisher Name"
+          value={formData.pubName}
+          onChange={(e) => setFormData({ ...formData,pubName: e.target.value })}
           required
         />
 
-        {/* Display Name */}
         <input
           type="text"
-          placeholder="Display Name"
-          value={formData.displayname}
-          onChange={(e) => setFormData({ ...formData, displayname: e.target.value })}
+          placeholder="Publisher Address"
+          value={formData.pubAddress}
+          onChange={(e) => setFormData({ ...formData, pubAddress: e.target.value })}
           required
         />
 
-        {/* Email */}
         <input
           type="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          placeholder="Publisher Email"
+          value={formData.pubEmail}
+          onChange={(e) => setFormData({ ...formData, pubEmail: e.target.value })}
+          required
+        />
+
+        <input
+          type="number"
+          placeholder="Publisher Phone"
+          value={formData.pubPhone}
+          onChange={(e) => setFormData({ ...formData, pubPhone: e.target.value })}
+          required
+        />
+       
+        <input
+          type="text"
+          placeholder="Publisher Description"
+          value={formData.pubDescription}
+          onChange={(e) => setFormData({ ...formData, pubDescription: e.target.value })}
           required
         />
 

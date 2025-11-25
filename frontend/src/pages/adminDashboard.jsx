@@ -12,6 +12,13 @@ export default function AdminDashboard() {
 
       <div className="tabs">
       <button 
+        className={activeTab === "users" ? "active" : ""} 
+        onClick={() => setActiveTab("users")}
+      >
+        All Users
+      </button>
+
+      <button 
         className={activeTab === "publishers" ? "active" : ""} 
         onClick={() => setActiveTab("publishers")}
       >
