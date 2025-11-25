@@ -12,6 +12,9 @@ import ErrorPage from "./components/ErrorPage";
 import ThreadList from "./pages/threadList";
 import CreateThread from "./pages/createThread";
 import ThreadDetail from "./components/threadDetail";
+import FavoriteBooksPage from "./pages/favoriteBooks";
+import ForgotPassword from "./components/forgotPasswordPage";
+import ResetPassword from "./components/resetPasswordPage";
 
 
 function App() {
@@ -25,9 +28,12 @@ function App() {
           <Route path='forum' element={<ThreadList />}></Route>
           <Route path='/forum/threads/new' element={<CreateThread />}></Route>
           <Route path='/forum/threads/:id' element={<ThreadDetail />}></Route>
+          <Route path='/favorites' element={<FavoriteBooksPage />}></Route>
         </Route>
         <Route path='/register' element={<RegisterForm/>}/>
         <Route path='/login' element={<LoginForm/>}/>
+        <Route path='/forgot-password' element={<ForgotPassword />}/>
+        <Route path='/reset-password' element={<ResetPassword />}/>
         <Route path='/error' element={<ErrorPage/>} />
       </Routes>
   )

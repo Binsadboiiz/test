@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/userManagement.css";
+import HandleErrorAPI from "../utils/handleErrorAPI";
 
 export default function PublisherManagement() {
   const [publishers, setPublishers] = useState([]);
@@ -14,8 +15,8 @@ export default function PublisherManagement() {
       const data = await res.json();
       setPublishers(data.filter(u => u.roles === "publisher"));
     } catch (err) {
-      console.warn("Using mock data...");
-      setPublishers([
+      HandleErrorAPI(err, navigate, "User Manament has an error (fail to fetch)")
+      const mockPublishers = [
         {
           _id: "1",
           pubName: "John Doe",
@@ -26,7 +27,7 @@ export default function PublisherManagement() {
           avatarUrl: "",
           roles: "publisher"
         },
-      ]);
+      ];
     } finally {
       setLoading(false);
     }
