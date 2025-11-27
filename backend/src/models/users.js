@@ -49,6 +49,11 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         default: null
     },
+    publisher_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Publisher",
+    default: null
+    },
     favoriteBooks: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Book',
