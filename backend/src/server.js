@@ -14,6 +14,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static("uploads"));
 
 app.use(
   cors({
@@ -27,8 +28,12 @@ await connectDB.connect();
 //Chạy lại npm i để cập nhật thư viện
 
 //Tạo 1 file .env là con của backend và thêm
-//PORT=3000
-//MONGO_URI=mongodb://localhost:27017/miniproject
+// MONGO_URI=mongodb+srv://dbBook:dbbook@book-management.k9uql4d.mongodb.net/bookDB
+// JWT_SECRET=phcuongdepzaii123
+// FRONTEND_URL=http://localhost:5173
+// EMAIL_USER=
+// EMAIL_PASS=
+// NODE_ENV=development
 
 //Các router được dời qua index để cho gọn
 

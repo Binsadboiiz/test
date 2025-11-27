@@ -18,7 +18,7 @@ import {
 
  const routerUser = express.Router();
  
- routerUser.post('/my-favorite-books/:bookId', authMiddleware, addFavoriteBook);
+
  routerUser.post('/forgot-password', forgotPassword);
  routerUser.post('/reset-password', resetPassword);
 
@@ -26,11 +26,11 @@ import {
  routerUser.post('/login', loginUser);
  routerUser.post('/logout', logoutUser);
 
- 
 
  routerUser.get('/', getAllUsers);
  routerUser.get('/my-favorite-books', authMiddleware, getMyFavoriteBooks);
 
+ routerUser.post('/my-favorite-books/:bookId', authMiddleware, addFavoriteBook);
  routerUser.get('/:id', getUserById);
  routerUser.put('/:id', editUser);
  routerUser.delete('/:id', deleteUser);

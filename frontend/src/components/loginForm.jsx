@@ -79,6 +79,7 @@ export default function LoginForm() {
         <button type="submit" disabled={loading}>
           {loading ? "Loading..." : "Login"}
         </button>
+        <Link to="/forgot-password"> Bạn quên mật khẩu?</Link>
 
         <div className="switch-auth">
           Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>

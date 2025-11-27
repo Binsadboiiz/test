@@ -24,7 +24,7 @@ export default function ForgotPassword() {
             if(!res.ok) throw res;
 
             const data = await res.json();
-            setMessage(data.message || "Please check your email");
+            setMessage((data.message && alert("Please, check your email!"))|| "Please check your email");
         } catch (error) {
             HandleErrorAPI(error, navigate, "ForgotPassword.handleSubmit");
         }

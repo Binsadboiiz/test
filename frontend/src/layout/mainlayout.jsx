@@ -1,6 +1,7 @@
 import "../styles/mainlayout.css";
 import { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+import { getAvatarUrl } from "../utils/avatar";
 
 export default function MainLayout() {
   const navigate = useNavigate();
@@ -57,10 +58,17 @@ export default function MainLayout() {
           </div>
         )} 
         {user && (
-          <div className="user-info">
-            <span>Hi, {user.displayname}</span>
-          </div>
-        )}
+            <div className="user-info">
+              <div className="user-avatar-wrap">
+                <img
+                  src={getAvatarUrl(user.avatarUrl)}
+                  alt="avatar"
+                  className="user-avatar"
+                />
+              </div>
+              <span>Hi, {user.displayname}</span>
+            </div>
+          )}
       </header>
 
       {/* Sidebar */}
@@ -92,6 +100,22 @@ export default function MainLayout() {
           <i className="bi bi-threads"></i>
           <span>Threads</span>
         </div>
+
+        {(roles.includes("user")) && (
+          <div className="btn-group" onClick={()=> navigate('/profile')}>
+            <i className="bi bi-person-square"></i>
+            <span>Profile</span>
+          </div>
+        )}
+
+        {/* Admin only */}
+        {(roles.includes("admin")) && (
+          <div className="btn-group" onClick={()=> navigate('/admin/dashboard')}>
+            <i className="bi bi-heart"></i>
+            <span>Admin dashboard</span>
+          </div>
+        )}
+
 
         {/* Logout */}
         {user && (

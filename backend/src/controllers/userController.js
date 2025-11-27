@@ -99,9 +99,9 @@ export async function loginUser(req, res, next) {
 
         //set cookie để lưu token
         res.cookie("token", token, {
-            httpOnly: false,
-            secure: false,
-            sameSite: "lax",
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
             maxAge: 24 * 60 * 60 * 1000 //1 ngày
         });
 
@@ -244,7 +244,9 @@ export async function forgotPassword(req, res, next) {
         user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
         await user.save();
 
-        const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}&email=${encodeURIComponent(email)}`;
+        const frontend = (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/+$/, "");
+        const resetLink = `${frontend}/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
+
 
         await mailTransporter.sendMail({
             from: `"BookVerse" <${process.env.EMAIL_USER}>`,

@@ -6,7 +6,9 @@ import ErrorApi from '../middlewares/handleError.js';
 export async function addReview(req, res, next) {
     try {
         const userId = req.user._id; 
-        const { bookId, rating, feedbackText } = req.body;
+        const { rating, feedbackText } = req.body;
+        const { bookId } = req.params;
+
 
         if (!bookId || !rating) throw new ErrorApi("Book ID and Rating are required", 400);
 
@@ -14,9 +16,12 @@ export async function addReview(req, res, next) {
         const book = await Book.findById(bookId);
         if (!book) throw new ErrorApi("Book not found", 404);
 
-        // Check xem user đã review chưa (Ngăn spam)
-        // const existingReview = await Review.findOne({ user_id: userId, book_id: bookId });
-        // if (existingReview) throw new ErrorApi("You have already reviewed this book", 409);
+        const existing = await Review.findOne({userId, bookId});
+        if(existing) {
+            existing.rating = rating;
+            await existing.save();
+            return res.json({message: "Rating updated", rating: existing});
+        }
 
         const newReview = await Review.create({
             user_id: userId,

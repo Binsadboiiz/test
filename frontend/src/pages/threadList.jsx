@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import fetchThreads from "../api/forumApi.js";
 import HandleErrorAPI from "../utils/handleErrorAPI.js";
+import { getAvatarUrl } from "../utils/avatar.js";
 import "../styles/forum.css";
 
 export default function ThreadList() {
@@ -80,7 +81,11 @@ export default function ThreadList() {
             <div className="feed-card composer-card" onClick={handleOpenCreate}>
                 <div className="composer-left">
                     <div className="avatar-circle">
-                        {user?.displayname ? user.displayname.charAt(0).toUpperCase() : "G"}
+                        {user?.avatarUrl ? (
+                            <img src={getAvatarUrl(user.avatarUrl)} alt={user.displayname || "avatar"} className="avatar-img" />
+                        ) : (
+                            <span className="avatar-initial">{(user?.displayname || "U").charAt(0).toUpperCase()}</span>
+                        )}
                     </div>
                 </div>
                 <div className="composer-right">
@@ -109,14 +114,17 @@ export default function ThreadList() {
             {!state.loading && !state.error && state.threads.length === 0 && <p>No threads found.</p>}
             
             {/* List thread */}
-
             {!state.loading && 
             state.threads.length > 0 && 
             state.threads.map((thread) => (
-                <div className="feed-card post-card" onClick={()=> handleOpenThread(thread._id)}>
+                <div className="feed-card post-card" key={thread._id} onClick={()=> handleOpenThread(thread._id)}>
                     <div className="post-header">
-                        <div className="avatar-circle">{thread.author?.displayname ?
-                            thread.author.displayname.charAt(0).toUpperCase() : "U"}
+                        <div className="avatar-circle">
+                            {thread.author?.avatarUrl ? (
+                                <img src={getAvatarUrl(thread.author.avatarUrl)} alt={thread.author.displayname || "avatar"} className="avatar-img" />
+                            ) : (
+                                <span className="avatar-initial">{(thread.author?.displayname || "U").charAt(0).toUpperCase()}</span>
+                            )}
                         </div>
                         <div className="post-header-info">
                             <div className="post-author">
@@ -140,7 +148,7 @@ export default function ThreadList() {
                         <h3 className="post-title">{thread.title}</h3>
                         {thread.content && (
                             <p className="post-content-preview">
-                                {thread.content.length > 180 ? thread.content.slice(0, 180 + "...") : thread.content}
+                                {thread.content.length > 180 ? thread.content.slice(0, 180) + "..." : thread.content}
                             </p>
                         )}
                     </div>
