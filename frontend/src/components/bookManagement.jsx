@@ -46,7 +46,7 @@ export default function BooksManagement() {
                 credentials: "include"
             });
 
-            if (!res.ok) throw new Error("Failed to delete");
+            if (!res.ok) throw new Error("Failed to delete this book");
 
             setBooks(books.filter(book => book._id !== id));
 
@@ -103,7 +103,7 @@ export default function BooksManagement() {
                                     className="bg-green-600 text-white px-3 py-1 rounded"
                                     onClick={() => navigate(`/admin/books/edit/${book._id}`)}
                                 >
-                                    Edit
+                                    Edit 
                                 </button>
 
                                 <button
