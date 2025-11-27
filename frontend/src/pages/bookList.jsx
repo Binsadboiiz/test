@@ -27,9 +27,10 @@ export default function BookList() {
             params.append("limit", LIMIT);
             if (search.trim()) params.append("search", search.trim());
             if (genre !== "all") params.append("genre", genre);
-            if(year) params.append("year", year);
+            if (year && year !== "all") params.append("year", year);
 
-            const res = await fetch(`http://localhost:3000/api/books?${params.toString()}`);
+            const res = await fetch(`http://localhost:3000/api/books/filter?${params.toString()}`);
+
             const data = await res.json();
 
             if(Array.isArray(data.genres)) {
@@ -42,7 +43,7 @@ export default function BookList() {
             setBooks(data.books || []);
             setTotalPages(data.totalPages || 1)
         } catch (error) {
-            HandleErrorAPI(error, navigate, "BôkList");
+            HandleErrorAPI(error, navigate, "BookList");
         } finally {
             setLoading(false);
         }
@@ -50,7 +51,7 @@ export default function BookList() {
 
     useEffect(() => {
         fetchBooks();
-    }, [currentPage, search, genre])
+    }, [currentPage, search, genre, year])
 
 
     const handleSearchSubmit = (e) => {
@@ -72,6 +73,10 @@ export default function BookList() {
         if (page < 1 || page > totalPages) return;
         setCurrentPage(page);
     };
+
+    const handleViewDetail = (id) => {
+    navigate(`/books/${id}`);
+  };
 
     return (
         <>
@@ -114,14 +119,14 @@ export default function BookList() {
 
                 <div className="book-container">
                     {books.map((book) => (
-                        <div className="book-card" key={book._id || book.id}>
+                        <div className="book-card" key={book._id || book.id} onClick={()=> handleViewDetail(book._id)}>
                             <div className="book-cover">
-                                <img src={book.coverUrl} alt={book.title} />
+                                <img src={book.thumbnailUrl} alt={book.bookTitle} />
                             </div>
                             <div className="book-info">
-                                <h3 className="book-title">{book.title}</h3>
-                                <p className="book-author">{book.author}</p>
-                                <p className="book-genre">{book.genre}</p>
+                                <h3 className="book-title">{book.bookTitle}</h3>
+                                <p className="book-author">{book.bookAuthor}</p>
+                                <p className="book-genre">{book.bookGenre}</p>
                                 {/* thêm rating / price / nút xem chi tiết */}
                             </div>
                         </div>

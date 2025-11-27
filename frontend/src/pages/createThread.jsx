@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createThread } from "../api/forumApi";
 import "../styles/forum.css";
+import HandleErrorAPI from "../utils/handleErrorAPI";
 
 export default function CreateThread() {
     const [state, setState] = useState({
@@ -59,6 +60,7 @@ export default function CreateThread() {
 
             navigate(`/forum/threads/${data.thread._id}`);
         } catch (error) {
+            HandleErrorAPI(error, navigate, "CreateThread.handleSubmit")
             setState(prev => ({
                 ...prev,
                 loading: false,
@@ -91,7 +93,7 @@ export default function CreateThread() {
                         </div>
                     </div>
                 </div>
-                <form className="create-pót-form" onSubmit={handleSubmit}>
+                <form className="create-post-form" onSubmit={handleSubmit}>
                     {state.error && (
                         <p className="error-text" style={{marginBottom: "8px"}}>{state.error}</p>
                     )}

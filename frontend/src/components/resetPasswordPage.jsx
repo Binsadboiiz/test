@@ -1,86 +1,112 @@
-import { useState } from "react";
+// src/pages/ResetPassword.jsx
+import React, { useState } from "react";
+import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
-import HandleErrorAPI from "../utils/handleErrorAPI";
 import "../styles/auth.css";
 
-const API_BASE = "http://localhost:3000/api/users";
-
-function useQuery() {
-  return new URLSearchParams(useLocation().search);
-}
+const api = axios.create({
+  baseURL: "http://localhost:3000/api/users",
+});
 
 export default function ResetPassword() {
-  const query = useQuery();
-  const token = query.get("token");
-  const email = query.get("email");
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [message, setMessage] = useState("");
+  const location = useLocation();
   const navigate = useNavigate();
 
-  console.log("ResetPassword token, email = ", token, email); // debug
+  const params = new URLSearchParams(location.search);
+  const initialToken = params.get("token") || "";
+  const rawEmail = params.get("email") || "";
+  const initialEmail = rawEmail ? decodeURIComponent(rawEmail) : "";
 
-  const handleSubmit = async (e) => {
+  const [token] = useState(initialToken); 
+  const [email] = useState(initialEmail); 
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [msg, setMsg] = useState("");
+  const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e) {
     e.preventDefault();
-    if (password !== confirm) {
-      setMessage("Password confirmation does not match.");
+    setErr("");
+    setMsg("");
+
+    if (!token || !email) {
+      setErr("Link reset không hợp lệ (thiếu token hoặc email).");
+      return;
+    }
+    if (!password || password !== confirm) {
+      setErr("Mật khẩu trống hoặc không khớp.");
+      return;
+    }
+    if (password.length < 6) {
+      setErr("Mật khẩu phải ít nhất 6 ký tự.");
       return;
     }
 
     try {
-      setMessage("");
-      const res = await fetch(`${API_BASE}/reset-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, token, password }),
+      setLoading(true);
+      const { data } = await api.post("/reset-password", {
+        email,
+        token,
+        password,
       });
-
-      if (!res.ok) throw res;
-
-      const data = await res.json();
-      setMessage(data.message || "Password has been reset.");
-
-      setTimeout(() => navigate("/login"), 1500);
+      setMsg(data.message || "Đặt lại mật khẩu thành công");
+      setPassword("");
+      setConfirm("");
+      setTimeout(() => navigate("/login"), 1400);
     } catch (error) {
-      HandleErrorAPI(error, navigate, "ResetPasswordPage.handleSubmit");
+      console.error("reset error", error);
+      setErr(error.response?.data?.message || "Reset thất bại");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  if (!token || !email) {
-    return (
-      <div className="auth-page">
-        <div className="auth-form">
-          <h1>Reset Password</h1>
-          <p style={{color: "black"}}>Invalid reset link</p>
-        </div>
-      </div>
-    );
   }
 
   return (
-    <div className="auth-page">
-      <div className="auth-form">
-        <h1>Reset Password</h1>
-        <form onSubmit={handleSubmit}>
-          <label>New password</label>
+    <div className="rp-page">
+      <div className="rp-card">
+        <h2 className="rp-title">Đặt lại mật khẩu</h2>
+
+        {err && <div className="rp-alert rp-error">{err}</div>}
+        {msg && <div className="rp-alert rp-success">{msg}</div>}
+
+        <form className="rp-form" onSubmit={handleSubmit}>
+          <label className="rp-label">Email</label>
+          <input className="rp-input" value={email} readOnly />
+
+          <label className="rp-label">Mật khẩu mới</label>
           <input
+            className="rp-input"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
+            placeholder="Nhập mật khẩu mới"
+            autoFocus
           />
 
-          <label>Confirm new password</label>
+          <label className="rp-label">Xác nhận mật khẩu</label>
           <input
+            className="rp-input"
             type="password"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
-            required
+            placeholder="Nhập lại mật khẩu"
           />
 
-          <button type="submit">Update password</button>
+          <button className="rp-btn" type="submit" disabled={loading}>
+            {loading ? "Đang xử lý..." : "Đặt lại mật khẩu"}
+          </button>
+
+          <div className="rp-footer">
+            <button
+              type="button"
+              className="rp-link"
+              onClick={() => navigate("/login")}
+            >
+              Quay lại trang đăng nhập
+            </button>
+          </div>
         </form>
-        {message && <p style={{ marginTop: 8 }}>{message}</p>}
       </div>
     </div>
   );

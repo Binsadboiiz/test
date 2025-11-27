@@ -1,4 +1,14 @@
-/* Wrapper full màn hình */
+:root{
+  --bg: #f6f8fb;
+  --card: #ffffff;
+  --accent: linear-gradient(90deg,#7b61ff,#00d4ff);
+  --text: #19202b;
+  --muted: #6b7280;
+  --error: #ff6b6b;
+  --success: #16a34a;
+  --shadow: 0 8px 28px rgba(23,31,63,0.06);
+}
+
 .auth-page {
   min-height: 100vh;
   display: flex;
@@ -124,7 +134,6 @@
   text-decoration: underline;
 }
 
-/* Animation nhẹ */
 @keyframes auth-pop {
   from {
     opacity: 0;
@@ -137,4 +146,119 @@
 }
 input {
     color: black;
+}
+
+.rp-page{
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  padding: 28px;
+}
+
+.rp-card{
+  width: 100%;
+  max-width: 520px;
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 28px;
+  border: 1px solid rgba(15,23,42,0.04);
+}
+
+.rp-title{
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.rp-alert{
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.rp-error{
+  background: rgba(255,107,107,0.08);
+  color: var(--error);
+  border: 1px solid rgba(255,107,107,0.12);
+}
+
+.rp-success{
+  background: rgba(22,163,74,0.08);
+  color: var(--success);
+  border: 1px solid rgba(22,163,74,0.12);
+}
+
+.rp-form{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rp-label{
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.rp-input{
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid rgba(15,23,42,0.06);
+  background: #fbfdff;
+  padding: 10px 12px;
+  font-size: 15px;
+  color: var(--text);
+  outline: none;
+  transition: box-shadow .15s ease, border-color .15s ease;
+}
+
+.rp-input:focus{
+  box-shadow: 0 6px 20px rgba(99,102,241,0.12);
+  border-color: rgba(123,97,255,0.6);
+}
+
+.rp-btn{
+  margin-top: 6px;
+  height: 44px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  box-shadow: 0 8px 24px rgba(123,97,255,0.12);
+  transition: transform .08s ease, opacity .12s ease;
+}
+
+.rp-btn:active{
+  transform: translateY(1px);
+}
+
+.rp-btn:disabled{
+  opacity: .6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.rp-footer{
+  display:flex;
+  justify-content: space-between;
+  align-items:center;
+  margin-top: 10px;
+}
+
+.rp-link{
+  background: transparent;
+  border: none;
+  color: #4b5563;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: underline;
+  padding: 6px;
 }

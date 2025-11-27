@@ -168,6 +168,7 @@ body {
 .post-author {
   font-weight: 600;
   font-size: 14px;
+  color: var(--text-main);
 }
 
 .post-meta {
@@ -210,6 +211,7 @@ body {
   font-size: 16px;
   font-weight: 600;
   margin: 0 0 4px;
+  color: var(--text-main);
 }
 
 .post-content-preview {
@@ -238,10 +240,13 @@ body {
 
 .post-stats {
   font-size: 12px;
-  color: var(--text-muted);
+  color: var(--text-main);
   display: flex;
   align-items: center;
   gap: 4px;
+}
+.post-stats span {
+  color: var(--text-main);
 }
 
 .post-actions {
@@ -351,6 +356,7 @@ body {
   font-size: 14px;
   resize: vertical;
   min-height: 120px;
+  color: var(--text-main);
   outline: none;
   background-color: #fff;
 }
@@ -449,6 +455,7 @@ body {
 .comment-author {
   font-weight: 600;
   font-size: 13px;
+  color: var(--text-main);
 }
 
 .comment-time {
@@ -459,6 +466,7 @@ body {
 .comment-text {
   font-size: 13px;
   margin: 0;
+  color: var(--text-main);
   white-space: pre-wrap;
 }
 
