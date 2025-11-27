@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import HandleErrorAPI from "../utils/handleErrorAPI";
+import { getAvatarUrl } from "../utils/avatar.js";
 import "../styles/bookdetail.css";
 
 export default function BookDetail() {
@@ -13,6 +14,10 @@ export default function BookDetail() {
   const [user] = useState(() =>
     JSON.parse(localStorage.getItem("user")) || null
   );
+
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState("");
+  const [commentLoading, setCommentLoading] = useState(false);
 
   const fetchBookDetail = async () => {
     try {
@@ -28,8 +33,19 @@ export default function BookDetail() {
     }
   };
 
+  const fetchComments = async () => {
+    try {
+      const res = await fetch(`http://localhost:3000/api/comments/book/${id}`);
+      const data = await res.json();
+      setComments(data.comments || []);
+    } catch (error) {
+      console.error("Failed to fetch comments", error);
+    }
+  };
+
   useEffect(() => {
     fetchBookDetail();
+    fetchComments();
   }, [id]);
 
   const handleAddFavorite = async () => {
@@ -80,6 +96,56 @@ export default function BookDetail() {
       });
     } catch (error) {
       HandleErrorAPI(error, navigate, "BookDetail-Rate");
+    }
+  };
+
+  const handleAddComment = async (e) => {
+    e.preventDefault();
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    if (!commentText.trim()) return;
+
+    try {
+      setCommentLoading(true);
+      const res = await fetch("http://localhost:3000/api/comments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ book: id, content: commentText.trim() }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(()=>({message:""}));
+        throw new Error(err.message || "Failed to add comment");
+      }
+      const data = await res.json();
+      setComments(prev => [data.comment, ...prev]);
+      setCommentText("");
+    } catch (error) {
+      console.error("Add comment error", error);
+      HandleErrorAPI(error, navigate, "BookDetail-CommentAdd");
+    } finally {
+      setCommentLoading(false);
+    }
+  };
+
+
+  const handleDeleteComment = async (commentId) => {
+    if (!user) { navigate("/login"); return; }
+    if (!window.confirm("Xoá bình luận này?")) return;
+
+    try {
+      const res = await fetch(`http://localhost:3000/api/comments/${commentId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to delete");
+      // remove from UI
+      setComments(prev => prev.filter(c => c._id !== commentId));
+    } catch (err) {
+      console.error("Delete comment error", err);
+      HandleErrorAPI(err, navigate, "BookDetail-CommentDelete");
     }
   };
 
@@ -150,6 +216,65 @@ export default function BookDetail() {
             <h2>About this book</h2>
             <p>{book.bookDescription || "Chưa có mô tả cho cuốn sách này."}</p>
           </div>
+
+          {/* ---------- COMMENTS ---------- */}
+          <div className="bookdetail-comments">
+            <h3>Bình luận ({comments.length})</h3>
+
+            {user ? (
+              <form className="comment-form" onSubmit={handleAddComment}>
+                <textarea
+                  className="comment-input"
+                  placeholder="Viết bình luận..."
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  rows={3}
+                />
+                <div className="comment-actions">
+                  <button className="comment-btn" type="submit" disabled={commentLoading}>
+                    {commentLoading ? "Đang gửi..." : "Gửi"}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div className="comment-login-cta">
+                <button className="btn-link" onClick={() => navigate("/login")}>Đăng nhập để bình luận</button>
+              </div>
+            )}
+
+            <div className="comments-list">
+              {comments.length === 0 && <div className="muted">Chưa có bình luận nào. Hãy là người đầu tiên!</div>}
+              {comments.map(c => (
+                <div key={c._id} className="comment-item">
+                  <div className="comment-avatar samill-avatar">
+                    {c.user?.avatarUrl ? (
+                      <img
+                        src={getAvatarUrl(c.user.avatarUrl)}
+                        alt={c.user?.displayname || c.user?.username || "avatar"}
+                        className="avatar-img"
+                      />
+                    ) : (
+                      <span className="avatar-initial">
+                        {(c.user?.displayname || c.user?.username || "U").charAt(0).toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                  <div className="comment-body">
+                    <div className="comment-meta">
+                      <strong>{c.user?.displayname || c.user?.username}</strong>
+                      <span className="comment-time">{new Date(c.createdAt).toLocaleString()}</span>
+                      {(user && (user._id === c.user?._id || user.roles?.includes?.("admin") || user.isAdmin)) && (
+                        <button className="comment-delete" onClick={() => handleDeleteComment(c._id)}>Xoá</button>
+                      )}
+                    </div>
+                    <div className="comment-content">{c.content}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* ---------- END COMMENTS ---------- */}
+
         </div>
       </div>
     </div>

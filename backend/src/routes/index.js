@@ -7,6 +7,7 @@ import routerAdmin from "./adminRouter.js";
 import routerPublisher from "./publisherRouter.js";
 import routerReview from "./reviewRouter.js";
 import routerProfile from "./profileRoutes.js";
+import routerComment from "./commentRouter.js";
 const router = (app) => {
 
     app.use('/api/users', routerUser);
@@ -16,6 +17,7 @@ const router = (app) => {
     app.use('/api/publishers', routerPublisher);
     app.use('/api/reviews', routerReview);
     app.use('/api/profile', routerProfile);
+    app.use('/api/comments', routerComment);
     app.get('/', (req, res)=>{
         res.send("API is Working");
     })

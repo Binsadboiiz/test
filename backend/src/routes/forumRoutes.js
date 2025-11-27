@@ -6,9 +6,10 @@ import checkNotBloacked from "../middlewares/checkBlocked.js";
 const routerForum = express.Router();
 
 routerForum.get('/', getThreads);
-routerForum.get('/:id', getThreadDetails);
 
 routerForum.post('/', authMiddleware,  checkNotBloacked, createThread);
+
+routerForum.get('/:id', getThreadDetails);
 routerForum.post('/:id/replies', authMiddleware, checkNotBloacked ,addReply);
 routerForum.delete('/:id', authMiddleware, checkNotBloacked , deleteThread);
 

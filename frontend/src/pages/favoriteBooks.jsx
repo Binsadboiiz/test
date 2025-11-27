@@ -58,7 +58,7 @@ export default function FavoriteBooksPage() {
     return (
         <div className="favorite-page">
             <h1>Favorite Books</h1>
-            <div className="book-gird">{books.map((book) => (
+            <div className="book-grid">{books.map((book) => (
                 <div key={book._id} className="book-card" onClick={()=> handleGoDetail(book._id)}>
                     <div className="thumb-wrapper">{book.thumbnailUrl ? (
                         <img src={book.thumbnailUrl} alt={book.bookTitle} />
