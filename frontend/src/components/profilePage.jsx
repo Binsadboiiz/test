@@ -35,7 +35,7 @@ useEffect(() => {
       if (!isMounted) return;
       setUser(u);
       setDisplayname(u?.displayname ?? u?.displayName ?? "");
-      setAvatarPreview(u?.avatarUrl ?? null);
+      setAvatarPreview(u?.avatarUrl ? getAvatarUrl(u.avatarUrl) : null);
       setErr("");
     } catch (e) {
       console.error("fetchProfile error", e);
@@ -129,7 +129,7 @@ setMsg(payload.message || "Cập nhật thành công");
           <div className="profile-left">
             <div className="avatar-box">
               <img
-                src={avatarPreview || "/default-avatar.png"}
+                src={avatarPreview ? avatarPreview : "/default-avatar.png"}
                 alt="avatar"
                 className="avatar-img"
               />
