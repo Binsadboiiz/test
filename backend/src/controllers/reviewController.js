@@ -5,14 +5,14 @@ import ErrorApi from '../middlewares/handleError.js';
 
 export async function addReview(req, res, next) {
     try {
-        const userId = req.user._id; 
+        const userId = req.user?._id || req.body.userId || null; 
         const { rating, feedbackText } = req.body;
-        const { bookId } = req.params;
+        const bookId = req.body.bookId || req.params.bookId;
 
 
         if (!bookId || !rating) throw new ErrorApi("Book ID and Rating are required", 400);
 
-        // Check sách tồn tại
+       
         const book = await Book.findById(bookId);
         if (!book) throw new ErrorApi("Book not found", 404);
 

@@ -384,3 +384,15 @@ export async function removeFavoriteBook(req, res, next) {
     next(error);
   }
 }
+
+export async function blockUser(req, res, next) {
+  try {
+    const { userId } = req.params;
+    const block =req.body;
+    const user = await User.findByIdAndUpdate(userId, {isBlocked: !!block}, {new: true});
+    if (!user) throw new ErrorApi("User not found", 404);
+    res.json(user)
+  } catch (error) {
+    next(error);
+  }
+}

@@ -11,7 +11,8 @@ import {
     forgotPassword,
     resetPassword,
     addFavoriteBook,
-    removeFavoriteBook
+    removeFavoriteBook,
+    blockUser
  } from '../controllers/userController.js';
  import authMiddleware from "../middlewares/authMiddleware.js";
 
@@ -33,6 +34,7 @@ import {
  routerUser.post('/my-favorite-books/:bookId', authMiddleware, addFavoriteBook);
  routerUser.get('/:id', getUserById);
  routerUser.put('/:id', editUser);
+ routerUser.patch('/:id/block', authMiddleware, blockUser);
  routerUser.delete('/:id', deleteUser);
  routerUser.delete('/my-favorite-books/:bookId', authMiddleware, removeFavoriteBook);
 

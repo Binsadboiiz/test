@@ -75,7 +75,7 @@ export default function FavoriteBooksPage() {
                         <p className="year-rating">
                             <span>{book.bookPublicationYear}</span>
                             {typeof book.averageRating === "number" && (
-                                <span>{book.averageRating}<i class="bi bi-star-fill"></i></span>
+                                <span>{book.averageRating}<i className="bi bi-star-fill"></i></span>
                             )}
                         </p>
                         {Array.isArray(book.bookGenre)  && book.bookGenre.length > 0 && (

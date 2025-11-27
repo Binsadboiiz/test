@@ -1,130 +1,191 @@
-/* publisherManagement.css */
-.publisher-management {
-  width: 90%;
-  margin: 20px auto;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #000;
-  background-color: #fff;
-  border-radius: 10px;
+.admin-user-management {
   padding: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: "Inter", sans-serif;
 }
 
-.publisher-management h2 {
-  text-align: center;
-  margin-bottom: 25px;
-  font-size: 1.8rem;
+h2 {
+  font-size: 24px;
   font-weight: 600;
-  color: #000;
+  margin-bottom: 16px;
 }
 
-/* Table */
-.publisher-management table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 600px;
+/* Controls */
+.am-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
 }
 
-.publisher-management th,
-.publisher-management td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-  color: #000;
+.am-controls input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #d0d0d0;
+  border-radius: 8px;
+  transition: 0.2s;
 }
 
-.publisher-management th {
-  background-color: #f9f9f9;
-  font-weight: 600;
+.am-controls input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
 }
 
-.publisher-management tbody tr:hover {
-  background-color: #f2f2f2;
-  transition: background 0.2s;
-}
-
-/* Avatar */
-.publisher-management img {
-  display: block;
-  margin: 0 auto;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-  background: #ddd;
-}
-
-/* Buttons */
-.publisher-management button {
-  padding: 6px 12px;
-  margin: 0 3px;
+.am-controls button {
+  background: #6366f1;
+  color: white;
+  padding: 10px 14px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.am-controls button:hover {
+  background: #4f46e5;
+}
+
+/* Table */
+.am-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+.am-table th {
+  text-align: left;
+  padding: 12px;
+  color: #555;
   font-weight: 600;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
-.publisher-management button.edit-btn {
-  background-color: #4caf50;
-  color: #fff;
+.am-table td {
+  background: white;
+  padding: 14px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
-.publisher-management button.delete-btn {
-  background-color: #f44336;
-  color: #fff;
+/* Highlight blocked */
+.am-blocked td {
+  background: #ffecec !important;
 }
 
-.publisher-management button:hover {
+/* Actions Button Styles */
+.am-btn {
+  padding: 8px 12px;
+  font-size: 13px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  margin-right: 6px;
+  transition: 0.15s;
+}
+
+.am-btn:hover {
   opacity: 0.85;
-  transform: translateY(-1px);
 }
 
-/* Long text (books column) */
-.publisher-management td.books-cell {
-  max-width: 250px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+/* Edit */
+.am-btn-edit {
+  background: #3b82f6;
+  color: white;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .publisher-management table,
-  .publisher-management thead,
-  .publisher-management tbody,
-  .publisher-management th,
-  .publisher-management td,
-  .publisher-management tr {
-    display: block;
-  }
+/* Delete */
+.am-btn-delete {
+  background: #ef4444;
+  color: white;
+}
 
-  .publisher-management tr {
-    margin-bottom: 15px;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
-  }
+/* Block */
+.am-block {
+  background: #f59e0b;
+  color: white;
+}
 
-  .publisher-management td {
-    padding-left: 50%;
-    position: relative;
-    text-align: left;
-  }
+/* Unblock */
+.am-unblock {
+  background: #10b981;
+  color: white;
+}
 
-  .publisher-management td::before {
-    position: absolute;
-    left: 15px;
-    top: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-    color: #333;
-  }
+/* Publisher manage */
+.am-btn-pub {
+  background: #6366f1;
+  color: white;
+}
 
-  .publisher-management td:nth-of-type(1)::before { content: "Avatar"; }
-  .publisher-management td:nth-of-type(2)::before { content: "Name"; }
-  .publisher-management td:nth-of-type(3)::before { content: "Email"; }
-  .publisher-management td:nth-of-type(4)::before { content: "Books"; }
-  .publisher-management td:nth-of-type(5)::before { content: "Role"; }
-  .publisher-management td:nth-of-type(6)::before { content: "Actions"; }
+/* Publisher Cards */
+.am-publishers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.am-publisher-card {
+  display: flex;
+  gap: 10px;
+  padding: 14px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  width: 280px;
+}
+
+.am-publisher-card img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Modal */
+.am-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.am-modal {
+  background: white;
+  width: 420px;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.am-modal-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.am-modal-body label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.am-modal-body input,
+.am-modal-body select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #d0d0d0;
+  margin-top: 4px;
+}
+
+.am-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.am-error {
+  margin-top: 10px;
+  color: #d12c2c;
+  font-size: 14px;
 }
