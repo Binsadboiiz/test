@@ -4,7 +4,8 @@ import LoginForm from "./components/loginForm";
 import RegisterForm from "./components/registerForm";
 import HomePage from "./pages/home";
 import AdminDashboard from "./pages/adminDashboard";
-
+import BooksManagement from "./components/bookManagement";
+import EditBook from "./components/editBook";
 import EditUser from "./components/editUser";
 import MainLayout from "./layout/mainlayout";
 import BookList from "./pages/bookList";
@@ -13,6 +14,8 @@ import ThreadList from "./pages/threadList";
 import CreateThread from "./pages/createThread";
 import ThreadDetail from "./components/threadDetail";
 import FavoriteBooksPage from "./pages/favoriteBooks";
+import ForgotPassword from "./components/forgotPasswordPage";
+import ResetPassword from "./components/resetPasswordPage";
 
 
 function App() {
@@ -22,6 +25,8 @@ function App() {
           <Route path='/' element={<HomePage/>}/>
           <Route path='/admin/dashboard' element={<AdminDashboard/>}/>
           <Route path='/admin/users/edit/:userId' element={<EditUser/>}/>
+          <Route path="/admin/books" element={<BooksManagement />} />
+          <Route path="/admin/books/edit/:id" element={<EditBook />} />
           <Route path='/books' element={<BookList/>}/>
           <Route path='forum' element={<ThreadList />}></Route>
           <Route path='/forum/threads/new' element={<CreateThread />}></Route>
@@ -30,6 +35,8 @@ function App() {
         </Route>
         <Route path='/register' element={<RegisterForm/>}/>
         <Route path='/login' element={<LoginForm/>}/>
+        <Route path='/forgot-password' element={<ForgotPassword />}/>
+        <Route path='/reset-password' element={<ResetPassword />}/>
         <Route path='/error' element={<ErrorPage/>} />
       </Routes>
   )
