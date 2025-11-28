@@ -35,6 +35,8 @@ export default function AdminUserManagement() {
   });
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
+  const [publisherRequests, setPublisherRequests] = useState([]);
+
 
   const loadUsers = async () => {
     setLoading(true);
@@ -44,6 +46,7 @@ export default function AdminUserManagement() {
       const data = await res.json();
       setUsers(data);
 
+      setPublisherRequests(data.filter(u => u.publisherRequest === "pending"));
       setPublishers(data.filter(u => u.roles === "publisher"));
     } catch (err) {
       HandleErrorAPI(err, navigate, "Failed to load users");
@@ -120,6 +123,21 @@ export default function AdminUserManagement() {
       setErrorMsg(err.message || "Error");
     }
   }
+
+  async function approveRequest(user) {
+    await fetch(`http://localhost:3000/api/publisher-request/approve/${user._id}`, {
+      method: "PUT",
+    });
+    loadUsers();
+  }
+
+  async function rejectRequest(user) {
+    await fetch(`http://localhost:3000/api/publisher-request/reject/${user._id}`, {
+      method: "PUT",
+    });
+    loadUsers();
+  }
+
 
   async function handleDelete(userId) {
     if (!window.confirm("Xác nhận xóa tài khoản này?")) return;
@@ -270,6 +288,19 @@ export default function AdminUserManagement() {
           </div>
         </form>
       </Modal>
+
+      <h2>Publisher Requests</h2>
+      {publisherRequests.map(u => (
+        <div className="request-card" key={u._id}>
+          <p>{u.username}</p>
+          <p>{u.email}</p>
+
+          <button onClick={() => approveRequest(u)}>Approve</button>
+          <button onClick={() => rejectRequest(u)}>Reject</button>
+        </div>
+      ))}
+
     </div>
+    
   );
 }
