@@ -39,7 +39,6 @@ function App() {
           <Route path="/publisher/register" element={<PublisherInfoForm />} />
         </Route>
         <Route path='/register' element={<RegisterForm/>}/>
-        <Route path="/publisher/register" element={<PublisherInfoForm />} />
         <Route path="/admin/publisher/requests" element={<AdminRequests />} />
         <Route path='/login' element={<LoginForm/>}/>
         <Route path='/forgot-password' element={<ForgotPassword />}/>
