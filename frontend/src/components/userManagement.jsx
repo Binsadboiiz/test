@@ -4,6 +4,8 @@ import "../styles/userManagement.css";
 import HandleErrorAPI from "../utils/handleErrorAPI";
 import { getAvatarUrl } from "../utils/avatar";
 
+const API_URL = import.meta.env.API_URL;
+
 function Modal({ show, title, children, onClose }) {
   if (!show) return null;
   return (
@@ -41,7 +43,7 @@ export default function AdminUserManagement() {
   const loadUsers = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:3000/api/users");
+      const res = await fetch(`${API_URL}/api/users`);
       if (!res.ok) throw new Error("Fail fetching users");
       const data = await res.json();
       setUsers(data);
@@ -111,14 +113,14 @@ export default function AdminUserManagement() {
     try {
       if (selectedUser) {
 
-        const res = await fetch(`http://localhost:3000/api/users/${selectedUser._id}`, {
+        const res = await fetch(`${API_URL}/api/users/${selectedUser._id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error("Update failed");
       } else {
-        const res = await fetch(`http://localhost:3000/api/users/register`, {
+        const res = await fetch(`${API_URL}/api/users/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -136,14 +138,14 @@ export default function AdminUserManagement() {
   }
 
   async function approveRequest(user) {
-    await fetch(`http://localhost:3000/api/publisher-request/approve/${user._id}`, {
+    await fetch(`${API_URL}/api/publisher-request/approve/${user._id}`, {
       method: "PUT",
     });
     loadUsers();
   }
 
   async function rejectRequest(user) {
-    await fetch(`http://localhost:3000/api/publisher-request/reject/${user._id}`, {
+    await fetch(`${API_URL}/api/publisher-request/reject/${user._id}`, {
       method: "PUT",
     });
     loadUsers();
@@ -153,7 +155,7 @@ export default function AdminUserManagement() {
   async function handleDelete(userId) {
     if (!window.confirm("Xác nhận xóa tài khoản này?")) return;
     try {
-      const res = await fetch(`http://localhost:3000/api/users/${userId}`, { method: "DELETE" });
+      const res = await fetch(`${API_URL}/api/users/${userId}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Delete failed");
       setUsers(prev => prev.filter(u => u._id !== userId));
     } catch (err) {
@@ -165,7 +167,7 @@ export default function AdminUserManagement() {
     const action = user.isBlocked ? "unblock" : "block";
     if (!window.confirm(`${user.isBlocked ? "Mở khóa" : "Khoá"} tài khoản ${user.username}?`)) return;
     try {
-      const res = await fetch(`http://localhost:3000/api/users/${user._id}/block`, {
+      const res = await fetch(`${API_URL}/api/users/${user._id}/block`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ block: !user.isBlocked }),

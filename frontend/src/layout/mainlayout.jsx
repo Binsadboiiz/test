@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { getAvatarUrl } from "../utils/avatar";
 
+const API_URL = import.meta.env.API_URL;
+
 export default function MainLayout() {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
@@ -26,7 +28,7 @@ export default function MainLayout() {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:3000/api/users/logout", {
+      await fetch(`${API_URL}/api/users/logout`, {
         method: "POST",
         credentials: "include",
       });

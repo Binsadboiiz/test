@@ -4,6 +4,8 @@ import HandleErrorAPI from "../utils/handleErrorAPI";
 import { getAvatarUrl } from "../utils/avatar.js";
 import "../styles/bookdetail.css";
 
+const API_URL = import.meta.env.API_URL;
+
 export default function BookDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -35,7 +37,7 @@ export default function BookDetail() {
 
   const fetchComments = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/api/comments/book/${id}`);
+      const res = await fetch(`${API_URL}/api/comments/book/${id}`);
       const data = await res.json();
       setComments(data.comments || []);
     } catch (error) {
@@ -56,7 +58,7 @@ export default function BookDetail() {
 
     try {
       const res = await fetch(
-        `http://localhost:3000/api/users/my-favorite-books/${book._id}`,
+        `${API_URL}/api/users/my-favorite-books/${book._id}`,
         {
           method: "POST",
           credentials: "include",
@@ -73,7 +75,7 @@ export default function BookDetail() {
   if (!user) { navigate("/login"); return; }
 
   try {
-    const res = await fetch(`http://localhost:3000/api/reviews`, {  
+    const res = await fetch(`${API_URL}/api/reviews`, {  
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -113,7 +115,7 @@ export default function BookDetail() {
 
     try {
       setCommentLoading(true);
-      const res = await fetch("http://localhost:3000/api/comments", {
+      const res = await fetch(`${API_URL}/api/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -143,7 +145,7 @@ export default function BookDetail() {
 
     try {
       const res = await fetch(
-        `http://localhost:3000/api/comments/${commentId}`,
+        `${API_URL}/api/comments/${commentId}`,
         {
           method: "DELETE",
           credentials: "include",

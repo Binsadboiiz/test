@@ -1,11 +1,13 @@
 import { useState } from "react";
 
+const API_URL = import.meta.env.API_URL;
+
 export default function PublisherRegister() {
   const userId = localStorage.getItem("userId");
   const [message, setMessage] = useState("");
 
   async function sendRequest() {
-    const res = await fetch("http://localhost:3000/api/publisher-request", {
+    const res = await fetch(`${API_URL}/api/publisher-request`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId }),

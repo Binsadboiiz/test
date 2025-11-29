@@ -3,13 +3,15 @@ import BookForm from "../components/auth/publisher/BookForm";
 import BookCard from "../components/auth/publisher/BookCard";
 import "../styles/publisherBook.css";
 
+const API_URL = import.meta.env.API_URL;
+
 export default function PublisherBooksPage() {
   const [books, setBooks] = useState([]);
   const [editing, setEditing] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
   async function loadBooks() {
-    const res = await fetch("http://localhost:3000/api/books?publisherId=me", {
+    const res = await fetch(`${API_URL}/api/books?publisherId=me`, {
       headers: { "Content-Type": "application/json" },
       credentials: "include"
     });
@@ -21,7 +23,7 @@ export default function PublisherBooksPage() {
     let mounted = true;
     async function loadBooks() {
         try {
-        const res = await fetch("http://localhost:3000/api/books", {
+        const res = await fetch(`${API_URL}/api/books`, {
             credentials: "include",
         });
         if (!res.ok) {

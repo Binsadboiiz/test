@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "../../../styles/bookForm.css"
 
+const API_URL = import.meta.env.API_URL;
+
 export default function BookForm({ book, onClose }) {
   const [form, setForm] = useState({
     bookTitle: book?.bookTitle || "",
@@ -30,7 +32,7 @@ export default function BookForm({ book, onClose }) {
       if (thumbnail) payload.append("thumbnail", thumbnail);
       if (bookFile) payload.append("bookFile", bookFile);
 
-      const url = isEdit ? `http://localhost:3000/api/books/${book._id}` : "http://localhost:3000/api/books";
+      const url = isEdit ? `${API_URL}/api/books/${book._id}` : "http://localhost:3000/api/books";
       const method = isEdit ? "PUT" : "POST";
 
       const res = await fetch(url, {

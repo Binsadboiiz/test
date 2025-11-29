@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/publisherForm.css";
 
+const API_URL = import.meta.env.API_URL;
+
 export default function PublisherInfoForm({ onSuccess }) {
   let userId = null;
   try {
@@ -49,7 +51,7 @@ export default function PublisherInfoForm({ onSuccess }) {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:3000/api/publishers/register", {
+      const res = await fetch(`${API_URL}/api/publishers/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, ...form }),

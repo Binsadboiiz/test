@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import "../styles/userManagement.css";
 import HandleErrorAPI from "../utils/handleErrorAPI";
 
+const API_URL = import.meta.env.API_URL;
+
 export default function EditPublisher() {
   const { publisherId } = useParams();
   const navigate = useNavigate();
@@ -19,7 +21,7 @@ export default function EditPublisher() {
   useEffect(() => {
     const loadPublisher = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/users/${publisherId}`);
+        const res = await fetch(`${API_URL}/api/users/${publisherId}`);
         const data = await res.json();
         setFormData({
           username: data.username,
@@ -65,7 +67,7 @@ export default function EditPublisher() {
       formPayload.append("roles", formData.roles);
       if (formData.avatarFile) formPayload.append("avatar", formData.avatarFile);
 
-      const res = await fetch(`http://localhost:3000/api/users/${publisherId}`, {
+      const res = await fetch(`${API_URL}/api/users/${publisherId}`, {
         method: "PUT",
         body: formPayload,
       });

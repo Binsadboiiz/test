@@ -1,5 +1,4 @@
-// src/api/forumApi.js
-const API_URL = "http://localhost:3000/api/threads";
+const API_URL = import.meta.env.API_URL;
 
 // LIST THREADS (public)
 export default async function fetchThreads({ category = "", q = "" }) {

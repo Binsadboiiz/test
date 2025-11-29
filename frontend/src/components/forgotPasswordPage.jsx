@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import HandleErrorAPI from "../utils/handleErrorAPI";
 import "../styles/auth.css";
 
-const API_URL = "http://localhost:3000/api/users";
+const API_URL = import.meta.env.API_URL;
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");

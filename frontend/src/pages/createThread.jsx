@@ -4,6 +4,8 @@ import { createThread } from "../api/forumApi";
 import "../styles/forum.css";
 import HandleErrorAPI from "../utils/handleErrorAPI";
 
+const API_URL = import.meta.env.API_URL;
+
 export default function CreateThread() {
     const [state, setState] = useState({
         title: "",

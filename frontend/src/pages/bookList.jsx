@@ -3,6 +3,8 @@ import HandleErrorAPI from "../utils/handleErrorAPI";
 import { useNavigate } from "react-router-dom";
 import "../styles/listbook.css";
 
+const API_URL = import.meta.env.API_URL;
+
 export default function BookList() {
     const [books, setBooks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -29,7 +31,7 @@ export default function BookList() {
             if (genre !== "all") params.append("genre", genre);
             if (year && year !== "all") params.append("year", year);
 
-            const res = await fetch(`http://localhost:3000/api/books/filter?${params.toString()}`);
+            const res = await fetch(`${API_URL}/api/books/filter?${params.toString()}`);
 
             const data = await res.json();
 

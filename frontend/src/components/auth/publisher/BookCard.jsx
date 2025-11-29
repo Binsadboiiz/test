@@ -2,12 +2,14 @@ import { useState } from "react";
 import BookReviews from "../publisher/BookReview";
 import "../../../styles/bookCard.css"
 
+const API_URL = import.meta.env.API_URL;
+
 export default function BookCard({ book, onEdit, onDeleted }) {
     const [reviewsOpen, setReviewsOpen] = useState(false);
 
   async function handleDelete() {
     if (!confirm("Xác nhận xóa sách này?")) return;
-    const res = await fetch(`http://localhost:3000/api/books/${book._id}`, {
+    const res = await fetch(`${API_URL}/api/books/${book._id}`, {
       method: "DELETE", credentials: "include"
     });
     if (!res.ok) { const d = await res.json().catch(()=>null); alert(d?.message || "Delete failed"); return; }

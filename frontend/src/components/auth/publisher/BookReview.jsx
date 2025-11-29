@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import "../../../styles/bookReview.css";
 import { getAvatarUrl } from "../../../utils/avatar";
 
+const API_URL = import.meta.env.API_URL;
+
 export default function BookReviews({ bookId, onClose }) {
   
   const [reviewFeedback, setReviewFeedback] = useState([]);  
@@ -14,7 +16,7 @@ export default function BookReviews({ bookId, onClose }) {
     async function loadReviews() {
       try {
         const res = await fetch(
-          `http://localhost:3000/api/reviews/book/${bookId}`,
+          `${API_URL}/api/reviews/book/${bookId}`,
           { credentials: "include" }
         );
         const data = await res.json();
@@ -36,7 +38,7 @@ export default function BookReviews({ bookId, onClose }) {
     async function loadComments() {
       try {
         const res = await fetch(
-          `http://localhost:3000/api/comments/book/${bookId}`
+          `${API_URL}/api/comments/book/${bookId}`
         );
         const data = await res.json();
         if (mounted) setComments(data.comments || []);

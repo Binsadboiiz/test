@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import HandleErrorAPI from "../utils/handleErrorAPI";
 import "../styles/home.css";
 
+const API_URL = import.meta.env.API_URL;
+
 export default function HomePage() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -12,7 +14,7 @@ export default function HomePage() {
     try {
       setLoading(true);
       const res = await fetch(
-        "http://localhost:3000/api/books/top-rate?limit=12"
+        `${API_URL}/api/books/top-rate?limit=12`
       );
       const data = await res.json();
       setBooks(data.books || []);
@@ -34,7 +36,7 @@ export default function HomePage() {
   const handleAddFavorite = async (bookId) => {
     try {
       const res = await fetch(
-        `http://localhost:3000/api/users/my-favorite-books/${bookId}`,
+        `${API_URL}/api/users/my-favorite-books/${bookId}`,
         {
           method: "POST",
           credentials: "include",
@@ -49,7 +51,7 @@ export default function HomePage() {
 
   const handleRate = async (bookId, rating) => {
     try {
-      const res = await fetch("http://localhost:3000/api/reviews", {
+      const res = await fetch(`${API_URL}/api/reviews`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

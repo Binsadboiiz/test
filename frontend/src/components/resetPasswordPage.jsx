@@ -4,8 +4,10 @@ import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/auth.css";
 
+const API_URL = import.meta.env.API_URL;
+
 const api = axios.create({
-  baseURL: "http://localhost:3000/api/users",
+  baseURL: `${API_URL}/api/users`,
 });
 
 export default function ResetPassword() {
