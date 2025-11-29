@@ -149,6 +149,7 @@ export async function editUser(req, res, next) {
         const {
             displayname,
             avatarUrl,
+            roles,
             isBlocked,
             favoriteBooks,
             newPassword
@@ -161,6 +162,7 @@ export async function editUser(req, res, next) {
         if(avatarUrl !== undefined) user.avatarUrl = avatarUrl;
         if(isBlocked !== undefined) user.isBlocked = isBlocked;
         if(favoriteBooks !== undefined) user.favoriteBooks = favoriteBooks;
+        if(roles !== undefined) user.roles = roles;
 
         if(newPassword) {
             user.passwordOld = user.password;
@@ -174,6 +176,7 @@ export async function editUser(req, res, next) {
             user: {
                 displayname: user.displayname,
                 avatarUrl: user.avatarUrl,
+                roles: user.roles,
                 isBlocked: user.isBlocked,
                 favoriteBooks: user.favoriteBooks,
                 updatedAt: user.updatedAt

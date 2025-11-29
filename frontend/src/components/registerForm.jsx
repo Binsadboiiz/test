@@ -56,6 +56,11 @@ export default function RegisterForm() {
             const data = await res.json();
             if(!res.ok) throw new Error(data.message || "Đăng ký thất bại");
 
+            if(data.user && data.user._id) {
+                localStorage.setItem("user", JSON.stringify(data.user));
+                localStorage.setItem("userId", data.user._id);
+                if(data.token) localStorage.setItem("token", data.token);
+            }
             setSuccessMsg(data.message || "Đăng ký thành công");
             setFormData({
                 username: "",
@@ -105,7 +110,7 @@ export default function RegisterForm() {
                 </div>
 
                 <button type="submit" disabled={loading} className="register-btn">{loading ? "Loading..." : "Register"}</button>
-
+                <Link to="/publisher/register">Muốn làm publisher? Tiếp tục ở đây →</Link>
                 <div className="switch-auth">
                     Đã có tài khoản? <Link to="/login">Đăng nhập</Link>
                 </div>

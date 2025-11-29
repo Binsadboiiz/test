@@ -75,16 +75,27 @@ export default function AdminUserManagement() {
 
   function openEdit(user) {
     setSelectedUser(user);
+
+    let roleValue = "user";
+    if (Array.isArray(user.roles)) {
+      if (user.roles.includes("publisher")) roleValue = "publisher";
+      else if (user.roles.includes("admin")) roleValue = "admin";
+      else roleValue = user.roles[0] || "user";
+    } else if (typeof user.roles === "string") {
+      roleValue = user.roles;
+    }
+
     setFormState({
       username: user.username || "",
       displayname: user.displayname || "",
       email: user.email || "",
-      roles: user.roles || "user",
+      roles: roleValue,
       avatarUrl: user.avatarUrl || "",
     });
     setErrorMsg("");
     setShowForm(true);
-  }
+}
+
 
   async function submitForm(e) {
     e.preventDefault();
@@ -93,7 +104,7 @@ export default function AdminUserManagement() {
       username: formState.username,
       displayname: formState.displayname,
       email: formState.email,
-      roles: formState.roles,
+      roles: Array.isArray(formState.roles) ? formState.roles : [formState.roles], 
       avatarUrl: formState.avatarUrl,
     };
 
@@ -107,7 +118,7 @@ export default function AdminUserManagement() {
         });
         if (!res.ok) throw new Error("Update failed");
       } else {
-        const res = await fetch(`http://localhost:3000/api/users`, {
+        const res = await fetch(`http://localhost:3000/api/users/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -215,7 +226,7 @@ export default function AdminUserManagement() {
                 <td>{u.username}</td>
                 <td>{u.displayname}</td>
                 <td>{u.email}</td>
-                <td>{u.roles}</td>
+                <td>{Array.isArray(u.roles) ? u.roles.join(", ") : u.roles}</td>
                 <td>{u.isBlocked ? "Yes" : "No"}</td>
                 <td>
                   <button className="am-btn am-btn-edit" onClick={() => openEdit(u)}>Edit</button>

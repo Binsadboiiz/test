@@ -44,7 +44,7 @@ export default function MainLayout() {
       {/* Header */}
       <header className="header-container">
         <div className="logo">
-          <img src="" alt="Logo page" />
+          <img alt="Logo page" />
         </div>
         <div className="title-header">MINI - PROJECT</div>
         {!user && (

@@ -1,244 +1,86 @@
-import bcrypt from 'bcrypt';
-import Publisher from '../models/publisher.js';
-import Book from '../models/books.js';
-import User from '../models/users.js';
-import ErrorApi from '../middlewares/handleError.js';
-import jwt from 'jsonwebtoken';
+import mongoose from "mongoose";
+import User from "../models/users.js";
+import Publisher from "../models/publisher.js";
 
-const loginAdmin = async (req, res, next) => {
-    try {
-        const { usernameOrEmail, password } = req.body
-        if (!usernameOrEmail || !password) {
-            throw new ErrorApi("Please enter username/email and password", 400);
-        }
+export async function registerPublisher(req, res) {
+  try {
+    const fromToken = req.user && req.user._id;
+    const {
+      userId: bodyUserId,
+      pubName,
+      pubAddress,
+      pubPhone,
+      pubEmail,
+      pubDescription
+    } = req.body;
 
-        const user = await User.findOne({
-            $or: [
-                { username: usernameOrEmail },
-                { email: usernameOrEmail }
-            ]
-        });
+    let userId = fromToken || bodyUserId;
 
-        if (!user || !(await bcrypt.compare(password, user.password))) {
-            throw new ErrorApi("Wrong account or password", 401);
-        }
-
-        if (!user.roles.includes("admin")) {
-            throw new ErrorApi("Access denied. You are not an admin.", 403);
-        }
-
-        if (user.isBlocked) {
-            throw new ErrorApi("Account is blocked", 403);
-        }
-
-        const token = jwt.sign(
-            { 
-                _id: user._id, 
-                roles: user.roles 
-            },
-            process.env.JWT_SECRET,
-            { expiresIn: '1d' }
-        );
-
-        const userResponse = {
-            _id: user._id,
-            username: user.username,
-            email: user.email,
-            displayname: user.displayname,
-            avatarUrl: user.avatarUrl,
-            roles: user.roles
-        };
-
-        res.json({ 
-            message: "Admin Login Successfully", 
-            token,
-            user: userResponse 
-        });
-    } catch (error) {
-        next(error)
+    if (typeof userId === "string") {
+      try {
+        const maybeObj = JSON.parse(userId);
+        if (maybeObj && maybeObj._id) userId = maybeObj._id;
+      } catch (e) {
+      }
+    } else if (typeof userId === "object" && userId !== null) {
+      if (userId._id) userId = userId._id;
     }
-}
 
-const addPublisher = async (req, res, next) => {
-    try {
-        const { pubName, pubAddress, pubPhone, pubEmail, pubDescription } = req.body;
-
-        if (!pubName || !pubPhone || !pubEmail) {
-            throw new ErrorApi("Name, Email and Phone is require", 400);
-        }
-
-        const existingPublisher = await Publisher.findOne({
-            $or: [{ pubName }, { pubEmail }]
-        })
-
-        if (existingPublisher) {
-            throw new ErrorApi("Publisher Name or Email already exists", 409);
-        }
-
-        const newPublisher = await Publisher.create({
-            pubName,
-            pubAddress,
-            pubPhone,
-            pubEmail,
-            pubDescription
-        });
-
-        res.status(201).json({ 
-            status: "Success",
-            message: "Create publisher successfully", 
-            publisher: newPublisher 
-        });
-    } catch (error) {
-        next(error)
-    };
-}
-
-const getAllPublisher = async (req, res, next) => {
-    try {
-        const publishers = await Publisher.find().sort({ createdAt: -1 });
-        res.json(publishers);
-    } catch (error) {
-        next(error);
-    };
-}
-
-const updatePublisher = async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        const updateData = req.body;
-
-        const publisher = await Publisher.findByIdAndUpdate(id, updateData, {
-            new: true,
-            runValidators: true
-        });
-
-        if (!publisher) {
-            throw new ErrorApi("Publisher not found", 404);
-        }
-
-        res.json({
-            message: "Publisher update successful",
-            publisher
-        });
-    } catch (error) { 
-        next(error);
-    };
-}
-
-const deletePublisher = async (req, res, next) => {
-    try {
-        const { id } = req.params;
-
-        const hasBooks = await Book.exists({ publisher_id: id });
-        if (hasBooks) {
-            throw new ErrorApi("Cannot delete. This publisher is already in the system.", 400);
-        }
-
-        const deletePublisher = await Publisher.findByIdAndDelete(id);
-        if (!deletePublisher) {
-            throw new ErrorApi("Publisher not found to delete", 404);
-        }
-        res.json({ message: "Publisher deleted successfully" });
-    } catch (error) {
-        next(error);
-    };
-}
-
-const getAllUserAdmin = async (req, res, next) => {
-    try {
-        const users = await User.find()
-            .select("-password -passwordOld")
-            .sort({ createdAt: -1 });
-        res.json(users);
-    } catch (error) {
-        next(error);
-    };
-}
-
-const getAllBookAdmin = async (req, res, next) => {
-    try {
-        const books = await Book.find()
-            .populate('publisher_id', 'pubName pubAddress pubEmail')
-            .sort({ createdAt: -1 });
-        res.json(books);
-    } catch (error) {
-        next(error);
-    };
-}
-
-function ensureAdmin(req) {
-    const roles = req.user?.roles || [];
-    if(!roles.includes("admin")) throw new ErrorApi("Unauthorized", 403);
-}
-
-const banUser = async (req, res, next) => {
-    try {
-        ensureAdmin(req);
-
-        const {id} = req.params;
-
-        if(String(req.user._id) === String(id)) {
-            throw new ErrorApi("Cannot ban yourself", 400);
-        }
-
-        const user = await User.findById(id);
-
-        if(!user) throw new ErrorApi("User not found", 404);
-
-        if(user.isBlocked) {
-            return res.json({
-                message: "User đã bị khóa",
-                user
-            });
-        }
-
-        user.isBlocked = true;
-        await user.save();
-
-        res.json({
-            message: `Đã khóa tài khoản ${user.username}`,
-            user,
-        });
-    } catch (error) {
-        next(error);
+    if (!userId) return res.status(400).json({ message: "userId is required" });
+    if (!pubName || !pubEmail || !pubPhone) {
+      return res.status(400).json({ message: "pubName, pubPhone and pubEmail is required" });
     }
-}
-
-const unbanUser = async (req, res, next) => {
-    try {
-        ensureAdmin(req);
-        const {id} = req.params;
-
-        const user = await User.findById(id);
-        if (!user) throw new ErrorApi("User không tồn tại", 404);
-
-        if(!user.isBlocked) {
-            return res.json({
-                message: "User này không bị khóa",
-                user,
-            });
-        }
-
-        user.isBlocked = false;
-        await user.save();
-
-        res.json({
-            message: `Đã mở khóa tài khoản ${user.username}`,
-            user,
-        })
-    } catch (error) {
-        next();
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid userId" });
     }
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (user.publisher_id) {
+      return res.status(409).json({ message: "User đã là publisher" });
+    }
+
+    const existPub = await Publisher.findOne({ pubEmail: pubEmail.trim().toLowerCase() });
+    if (existPub) return res.status(409).json({ message: "Publisher với email này đã tồn tại" });
+
+    const rawPhone = String(pubPhone || "").trim();
+    const digits = rawPhone.replace(/\D/g, "");
+    if (!digits) return res.status(400).json({ message: "Số điện thoại không hợp lệ" });
+
+    const phoneNum = Number(digits);
+    if (Number.isNaN(phoneNum)) return res.status(400).json({ message: "Số điện thoại không hợp lệ" });
+
+    const newPub = new Publisher({
+      pubName: pubName.trim(),
+      pubAddress: (pubAddress || "").trim(),
+      pubPhone: phoneNum,
+      pubEmail: pubEmail.trim().toLowerCase(),
+      pubDescription: (pubDescription || "").trim()
+    });
+    await newPub.save();
+    user.roles = ["publisher"];       
+    user.publisher_id = newPub._id;
+    await user.save();
+
+    return res.json({ message: "Đăng ký Publisher thành công", publisher: newPub });
+  } catch (error) {
+    console.error("registerPublisher error:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
 }
 
-export default {
-    loginAdmin,
-    addPublisher,
-    getAllPublisher,
-    updatePublisher,
-    deletePublisher,
-    getAllUserAdmin,
-    getAllBookAdmin,
-    banUser,
-    unbanUser
-};
+export async function getPublisherById(req, res) {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ message: "Invalid id" });
+
+    const pub = await Publisher.findById(id);
+    if (!pub) return res.status(404).json({ message: "Publisher not found" });
+
+    return res.json(pub);
+  } catch (err) {
+    console.error("getPublisherById error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+}

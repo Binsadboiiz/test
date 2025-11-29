@@ -1,17 +1,16 @@
 import express from "express";
-import publisherController from "../controllers/publisherController.js";
-import { verifyToken } from "../middlewares/verifyToken.js";
+import { createBook, deleteBook } from "../controllers/bookController.js";
+import { registerPublisher, getPublisherById } from "../controllers/adminController.js";
+import authMiddleware from "../middlewares/authMiddleware.js";
+
 
 const routerPublisher = express.Router();
 
-routerPublisher.post("/login", publisherController.loginPublisher);
 
-routerPublisher.post("/books", verifyToken, publisherController.createBook);
+routerPublisher.post("/books", authMiddleware, createBook);
 
-routerPublisher.delete("/books/:bookId", verifyToken, publisherController.deleteBook);
-
-routerPublisher.get("/feedback/:publisher_id", verifyToken, publisherController.getReaderFeedback);
-
-routerPublisher.get("/stats/:publisher_id", verifyToken, publisherController.getPublisherStats);
+routerPublisher.post("/register", registerPublisher);
+routerPublisher.delete("/books/:bookId", authMiddleware,  deleteBook);
+routerPublisher.get("/:id", getPublisherById);
 
 export default routerPublisher;
