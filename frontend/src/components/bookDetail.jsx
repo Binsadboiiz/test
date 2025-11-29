@@ -24,7 +24,7 @@ export default function BookDetail() {
   const fetchBookDetail = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:3000/api/books/${id}`);
+      const res = await fetch(`${API_URL}/api/books/${id}`);
       const data = await res.json();
 
       setBook(data.book || data);
