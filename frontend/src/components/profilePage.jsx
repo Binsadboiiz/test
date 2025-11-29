@@ -3,7 +3,7 @@ import axios from "axios";
 import { getAvatarUrl } from "../utils/avatar.js";
 import "../styles/profilepage.css";
 
-const API_URL = import.meta.env.API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 const api = axios.create({
   baseURL: `${API_URL}/api/profile`,

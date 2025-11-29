@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "../../../styles/bookReview.css";
 import { getAvatarUrl } from "../../../utils/avatar";
 
-const API_URL = import.meta.env.API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function BookReviews({ bookId, onClose }) {
   

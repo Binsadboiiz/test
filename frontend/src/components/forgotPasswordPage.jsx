@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import HandleErrorAPI from "../utils/handleErrorAPI";
 import "../styles/auth.css";
 
-const API_URL = import.meta.env.API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");

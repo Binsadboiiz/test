@@ -1,4 +1,5 @@
 export default function HandleErrorAPI(error, naviagate, from="") {
+    console.log("API ERROR from:", from, error )
     if(error instanceof Response) {
         naviagate('/error', {
             state: {

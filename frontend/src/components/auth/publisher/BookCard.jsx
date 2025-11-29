@@ -2,7 +2,7 @@ import { useState } from "react";
 import BookReviews from "../publisher/BookReview";
 import "../../../styles/bookCard.css"
 
-const API_URL = import.meta.env.API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function BookCard({ book, onEdit, onDeleted }) {
     const [reviewsOpen, setReviewsOpen] = useState(false);

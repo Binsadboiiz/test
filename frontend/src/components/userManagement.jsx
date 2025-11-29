@@ -4,7 +4,7 @@ import "../styles/userManagement.css";
 import HandleErrorAPI from "../utils/handleErrorAPI";
 import { getAvatarUrl } from "../utils/avatar";
 
-const API_URL = import.meta.env.API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 function Modal({ show, title, children, onClose }) {
   if (!show) return null;

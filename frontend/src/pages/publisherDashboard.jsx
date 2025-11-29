@@ -3,7 +3,7 @@ import BookForm from "../components/auth/publisher/BookForm";
 import BookCard from "../components/auth/publisher/BookCard";
 import "../styles/publisherBook.css";
 
-const API_URL = import.meta.env.API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function PublisherBooksPage() {
   const [books, setBooks] = useState([]);

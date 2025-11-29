@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import HandleErrorAPI from "../utils/handleErrorAPI";
 import "../styles/home.css";
 
-const API_URL = import.meta.env.API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function HomePage() {
   const [books, setBooks] = useState([]);
@@ -13,13 +13,24 @@ export default function HomePage() {
   const fetchTopBooks = async () => {
     try {
       setLoading(true);
-      const res = await fetch(
-        `${API_URL}/api/books/top-rate?limit=12`
-      );
+      const res = await fetch(`${API_URL}/api/books/top-rate?limit=12`);
+      const contentType = res.headers.get('content-type') || '';
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Server error ${res.status}: ${text}`);
+      }
+
+      if (!contentType.includes('application/json')) {
+        const text = await res.text();
+        console.error('Non-JSON response for top-rate:', contentType, text);
+        throw new Error('Server returned non-JSON response. Check backend logs.');
+      }
+
       const data = await res.json();
       setBooks(data.books || []);
     } catch (error) {
-      HandleErrorAPI(error, navigate, "HomePage");
+      HandleErrorAPI(error, navigate, "HomePage.fetchTopBook");
     } finally {
       setLoading(false);
     }

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "../styles/userManagement.css";
 import HandleErrorAPI from "../utils/handleErrorAPI";
 
-const API_URL = import.meta.env.API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function EditPublisher() {
   const { publisherId } = useParams();
