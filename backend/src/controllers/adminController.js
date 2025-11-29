@@ -41,9 +41,6 @@ export async function registerPublisher(req, res) {
       return res.status(409).json({ message: "User đã là publisher" });
     }
 
-    const existPub = await Publisher.findOne({ pubEmail: pubEmail.trim().toLowerCase() });
-    if (existPub) return res.status(409).json({ message: "Publisher với email này đã tồn tại" });
-
     const rawPhone = String(pubPhone || "").trim();
     const digits = rawPhone.replace(/\D/g, "");
     if (!digits) return res.status(400).json({ message: "Số điện thoại không hợp lệ" });
