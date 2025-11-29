@@ -1,7 +1,4 @@
 export default function HandleErrorAPI(error, naviagate, from="") {
-    console.error("API Error from", from, error);
-
-    //lỗi từ ré của fetch
     if(error instanceof Response) {
         naviagate('/error', {
             state: {
