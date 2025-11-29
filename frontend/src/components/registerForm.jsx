@@ -112,7 +112,7 @@ export default function RegisterForm() {
                 </div>
 
                 <button type="submit" disabled={loading} className="register-btn">{loading ? "Loading..." : "Register"}</button>
-                <Link to="/publisher/register">Muốn làm publisher? Tiếp tục ở đây →</Link>
+                
                 <div className="switch-auth">
                     Đã có tài khoản? <Link to="/login">Đăng nhập</Link>
                 </div>
