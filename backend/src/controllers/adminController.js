@@ -1,54 +1,95 @@
-import mongoose from "mongoose";
 import User from "../models/users.js";
 import Publisher from "../models/publisher.js";
+import PublisherRequest from "../models/publisherRequest.js";
+import mongoose from "mongoose";
 
+// lấy danh sách yêu cầu chờ duyệt
+export async function getRequests(req, res) {
+  try {
+    const requests = await PublisherRequest.find({ status: "pending" })
+      .populate("userId", "username email displayname");
+    return res.json(requests);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+}
+
+// duyệt yêu cầu
+export async function approveRequest(req, res) {
+  try {
+    const { requestId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(requestId))
+      return res.status(400).json({ message: "Invalid requestId" });
+
+    const request = await PublisherRequest.findById(requestId);
+    if (!request) return res.status(404).json({ message: "Request not found" });
+    if (request.status !== "pending") return res.status(400).json({ message: "Request đã xử lý" });
+
+    const user = await User.findById(request.userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const newPublisher = new Publisher({
+      pubName: request.pubName,
+      pubAddress: request.pubAddress,
+      pubPhone: request.pubPhone,
+      pubEmail: request.pubEmail,
+      pubDescription: request.pubDescription
+    });
+    await newPublisher.save();
+
+    user.roles = ["publisher"];
+    user.publisher_id = newPublisher._id;
+    await user.save();
+
+    request.status = "approved";
+    await request.save();
+
+    return res.json({ message: "Duyệt thành công", publisher: newPublisher });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+}
+
+// từ chối yêu cầu
+export async function rejectRequest(req, res) {
+  try {
+    const { requestId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(requestId))
+      return res.status(400).json({ message: "Invalid requestId" });
+
+    const request = await PublisherRequest.findById(requestId);
+    if (!request) return res.status(404).json({ message: "Request not found" });
+
+    request.status = "rejected";
+    await request.save();
+
+    return res.json({ message: "Yêu cầu đã bị từ chối" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+}
+
+// register trực tiếp publisher (bỏ qua chờ duyệt, có thể dùng cho test hoặc admin tạo)
 export async function registerPublisher(req, res) {
   try {
-    const fromToken = req.user && req.user._id;
-    const {
-      userId: bodyUserId,
-      pubName,
-      pubAddress,
-      pubPhone,
-      pubEmail,
-      pubDescription
-    } = req.body;
+    const userId = req.user?._id || req.body.userId;
+    const { pubName, pubAddress, pubPhone, pubEmail, pubDescription } = req.body;
 
-    let userId = fromToken || bodyUserId;
-
-    if (typeof userId === "string") {
-      try {
-        const maybeObj = JSON.parse(userId);
-        if (maybeObj && maybeObj._id) userId = maybeObj._id;
-      } catch (e) {
-      }
-    } else if (typeof userId === "object" && userId !== null) {
-      if (userId._id) userId = userId._id;
-    }
-
-    if (!userId) return res.status(400).json({ message: "userId is required" });
-    if (!pubName || !pubEmail || !pubPhone) {
-      return res.status(400).json({ message: "pubName, pubPhone and pubEmail is required" });
-    }
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ message: "Invalid userId" });
-    }
+    if (!userId || !pubName || !pubEmail || !pubPhone)
+      return res.status(400).json({ message: "userId, pubName, pubPhone, pubEmail required" });
 
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    if (user.publisher_id) {
-      return res.status(409).json({ message: "User đã là publisher" });
-    }
+    if (user.publisher_id) return res.status(409).json({ message: "User đã là publisher" });
 
     const existPub = await Publisher.findOne({ pubEmail: pubEmail.trim().toLowerCase() });
-    if (existPub) return res.status(409).json({ message: "Publisher với email này đã tồn tại" });
+    if (existPub) return res.status(409).json({ message: "Publisher đã tồn tại" });
 
-    const rawPhone = String(pubPhone || "").trim();
-    const digits = rawPhone.replace(/\D/g, "");
-    if (!digits) return res.status(400).json({ message: "Số điện thoại không hợp lệ" });
-
-    const phoneNum = Number(digits);
+    const phoneNum = Number(String(pubPhone).replace(/\D/g, ""));
     if (Number.isNaN(phoneNum)) return res.status(400).json({ message: "Số điện thoại không hợp lệ" });
 
     const newPub = new Publisher({
@@ -59,17 +100,19 @@ export async function registerPublisher(req, res) {
       pubDescription: (pubDescription || "").trim()
     });
     await newPub.save();
-    user.roles = ["publisher"];       
+
+    user.roles = ["publisher"];
     user.publisher_id = newPub._id;
     await user.save();
 
     return res.json({ message: "Đăng ký Publisher thành công", publisher: newPub });
-  } catch (error) {
-    console.error("registerPublisher error:", error);
+  } catch (err) {
+    console.error(err);
     return res.status(500).json({ message: "Server error" });
   }
 }
 
+// lấy publisher theo id
 export async function getPublisherById(req, res) {
   try {
     const { id } = req.params;
@@ -80,7 +123,7 @@ export async function getPublisherById(req, res) {
 
     return res.json(pub);
   } catch (err) {
-    console.error("getPublisherById error:", err);
+    console.error(err);
     return res.status(500).json({ message: "Server error" });
   }
 }
