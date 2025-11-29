@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { getAvatarUrl } from "../utils/avatar.js";
 import "../styles/profilepage.css";
@@ -200,6 +201,7 @@ setMsg(payload.message || "Cập nhật thành công");
               <div className="form-actions">
                 <button className="btn btn-ghost" type="submit">Change password</button>
               </div>
+              <Link to="/publisher/register">Muốn làm publisher? Tiếp tục ở đây →</Link>
             </form>
           </div>
         </div>

@@ -19,9 +19,11 @@ app.use('/uploads', express.static("uploads"));
 app.use(
   cors({
     origin: process.env.ALLOWED_ORIGIN,
+    
     credentials: true,
   })
 );
+
 
 router(app);
 await connectDB.connect();
@@ -36,7 +38,6 @@ await connectDB.connect();
 // NODE_ENV=development
 
 //Các router được dời qua index để cho gọn
-
 
 app.listen(PORT, () => {
     const msg = `

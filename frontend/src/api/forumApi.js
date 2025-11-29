@@ -6,7 +6,7 @@ export default async function fetchThreads({ category = "", q = "" }) {
     if (category) params.append("category", category);
     if (q) params.append("q", q);
 
-    const res = await fetch(`${API_URL}?${params.toString()}`);
+    const res = await fetch(`${API_URL}/api/threads?${params.toString()}`);
 
     if (!res.ok) {
         console.error("fetchThreads error", res.status, res.url);
@@ -25,7 +25,7 @@ export async function fetchThreadDetail(id) {
 
 // CREATE THREAD (cần auth bằng cookie)
 export async function createThread({ title, content, category }) {
-    const res = await fetch(API_URL, {
+    const res = await fetch(`${API_URL}/api/threads`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",          // GỬI COOKIE LÊN

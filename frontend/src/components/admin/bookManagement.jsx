@@ -53,7 +53,7 @@ export default function BookManagement() {
       setLoading(true);
 
       const res = await fetch(
-        `${API_URL}/books/filter?page=${page}&limit=${limit}&search=${query}`
+        `${API_URL}/api/books/filter?page=${page}&limit=${limit}&search=${query}`
       );
 
       const text = await res.text();
