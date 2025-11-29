@@ -4,7 +4,7 @@ import LoginForm from "./components/loginForm";
 import RegisterForm from "./components/registerForm";
 import HomePage from "./pages/home";
 import AdminDashboard from "./pages/adminDashboard";
-import PublisherRegister from "./components/publisherRegister";
+import PublisherBooksPage  from "./pages/publisherDashboard";
 import EditUser from "./components/editUser";
 import MainLayout from "./layout/mainlayout";
 import BookList from "./pages/bookList";
@@ -27,7 +27,7 @@ function App() {
           <Route path='/' element={<HomePage/>}/>
           <Route path='/admin/dashboard' element={<AdminDashboard/>}/>
           <Route path='/admin/users/edit/:userId' element={<EditUser/>}/>
-          {/* <Route path='/publisher/register' element={<PublisherRegister/>}/> */}
+          <Route path='/publisher/dashboard' element={<PublisherBooksPage />}/>
           <Route path='/books' element={<BookList/>}/>
           <Route path='forum' element={<ThreadList />}></Route>
           <Route path='/forum/threads/new' element={<CreateThread />}></Route>
