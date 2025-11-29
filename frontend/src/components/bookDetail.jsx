@@ -58,7 +58,7 @@ export default function BookDetail() {
 
     try {
       const res = await fetch(
-        `${API_URL}/api/users/my-favorite-books/${book._id}`,
+        `${API_URL}/api/users//my-favorite-books/${book._id}`,
         {
           method: "POST",
           credentials: "include",

@@ -15,7 +15,7 @@ export default function FavoriteBooksPage() {
             try {
                 setLoading(true);
                 
-                const res = await fetch(`${API_URL}/my-favorite-books`, {
+                const res = await fetch(`${API_URL}/api/users/my-favorite-books`, {
                     method: "GET",
                     credentials: "include"
                 });

@@ -103,12 +103,11 @@ export default function MainLayout() {
           <span>Threads</span>
         </div>
 
-        {(roles.includes("user")) || (roles.includes("publisher")) || (roles.includes("admin")) && (
+        
           <div className="btn-group" onClick={()=> navigate('/profile')}>
             <i className="bi bi-person-square"></i>
             <span>Profile</span>
           </div>
-        )}
 
         {/* Admin only */}
         {(roles.includes("admin")) && (
