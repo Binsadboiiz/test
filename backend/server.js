@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import chalk from 'chalk';
 import boxen from 'boxen';
-import connectDB from './config/db.js';
-import router from './routes/index.js';
+import connectDB from './src/config/db.js';
+import router from './src/routes/index.js';
 import cookieParser from "cookie-parser";
 
 dotenv.config();
@@ -18,7 +18,7 @@ app.use('/uploads', express.static("uploads"));
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: process.env.ALLOWED_ORIGIN,
     credentials: true,
   })
 );
@@ -41,7 +41,7 @@ await connectDB.connect();
 app.listen(PORT, () => {
     const msg = `
 ============ SERVER RUNNING ===========
-Visit http://localhost:${PORT}
+Visit ${PORT}
 `;
     console.log(
         boxen(chalk.green(msg), {
