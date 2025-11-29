@@ -19,7 +19,7 @@ const router = (app) => {
     app.use('/api/profile', routerProfile);
     app.use('/api/comments', routerComment);
     app.get('/', (req, res)=>{
-        res.send("API is Working");
+        res.json("API is Working");
     })
 
     
