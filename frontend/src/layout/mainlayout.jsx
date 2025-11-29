@@ -101,7 +101,7 @@ export default function MainLayout() {
           <span>Threads</span>
         </div>
 
-        {(roles.includes("user")) && (
+        {(roles.includes("user")) || (roles.includes("publisher")) || (roles.includes("admin")) && (
           <div className="btn-group" onClick={()=> navigate('/profile')}>
             <i className="bi bi-person-square"></i>
             <span>Profile</span>
@@ -113,6 +113,13 @@ export default function MainLayout() {
           <div className="btn-group" onClick={()=> navigate('/admin/dashboard')}>
             <i className="bi bi-heart"></i>
             <span>Admin dashboard</span>
+          </div>
+        )}
+
+        {(roles.includes("publisher")) && (
+          <div className="btn-group" onClick={()=> navigate('/publisher/dashboard')}>
+            <i className="bi bi-heart"></i>
+            <span>Publisher dashboard</span>
           </div>
         )}
 
