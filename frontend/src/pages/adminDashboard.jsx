@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "../styles/adminDashboard.css"
-import AdminUserManagement from "../components/userManagement";
-import AdminBookManagement from "../components/bookManagement"
+import AdminUserManagement from "../components/admin/userManagement";
+import AdminBookManagement from "../components/admin/bookManagement"
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("users");

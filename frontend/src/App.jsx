@@ -5,7 +5,7 @@ import RegisterForm from "./components/registerForm";
 import HomePage from "./pages/home";
 import AdminDashboard from "./pages/adminDashboard";
 import PublisherBooksPage  from "./pages/publisherDashboard";
-import EditUser from "./components/editUser";
+import EditUser from "./components/admin/editUser";
 import MainLayout from "./layout/mainlayout";
 import BookList from "./pages/bookList";
 import ErrorPage from "./components/ErrorPage";
@@ -18,6 +18,7 @@ import ResetPassword from "./components/resetPasswordPage";
 import BookDetail from "./components/bookDetail";
 import ProfilePage from "./components/profilePage";
 import PublisherInfoForm from "./components/publisherInfoForm";
+import AdminRequests from "./components/admin/adminRequest";
 
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
         </Route>
         <Route path='/register' element={<RegisterForm/>}/>
         <Route path="/publisher/register" element={<PublisherInfoForm />} />
+        <Route path="/admin/publisher/requests" element={<AdminRequests />} />
         <Route path='/login' element={<LoginForm/>}/>
         <Route path='/forgot-password' element={<ForgotPassword />}/>
         <Route path='/reset-password' element={<ResetPassword />}/>

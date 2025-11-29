@@ -4,7 +4,8 @@ import "../styles/publisherForm.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export default function PublisherInfoForm({ onSuccess }) {
+export default function PublisherRequestForm({ onSuccess }) {
+  // Lấy userId từ localStorage
   let userId = null;
   try {
     const stored = localStorage.getItem("user");
@@ -16,7 +17,6 @@ export default function PublisherInfoForm({ onSuccess }) {
     console.log("Error parsing user:", err);
   }
   if (!userId) userId = localStorage.getItem("userId");
-  console.log("sending userId:", userId);
 
   const [form, setForm] = useState({
     pubName: "",
@@ -51,15 +51,20 @@ export default function PublisherInfoForm({ onSuccess }) {
 
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/publishers/register`, {
+      const res = await fetch(`${API_URL}/api/publisher/request`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, ...form }),
+        credentials: "include" // gửi cookie token nếu cần
       });
+
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Register failed");
-      setSuccess(data.message || "Thành công");
-      if (onSuccess) onSuccess(data.publisher);
+
+      if (!res.ok) throw new Error(data.message || "Gửi yêu cầu thất bại");
+
+      setSuccess("Yêu cầu của bạn đã được gửi. Chờ admin duyệt.");
+      if (onSuccess) onSuccess(data); // data có thể là request object
+      setForm({ pubName: "", pubAddress: "", pubPhone: "", pubEmail: "", pubDescription: "" });
     } catch (err) {
       setError(err.message || "Lỗi server");
     } finally {
@@ -69,7 +74,7 @@ export default function PublisherInfoForm({ onSuccess }) {
 
   return (
     <div className="pub-register-card">
-      <h2 className="pub-title">Đăng ký Publisher</h2>
+      <h2 className="pub-title">Yêu cầu trở thành Publisher</h2>
 
       {error && <div className="pub-error">{error}</div>}
       {success && <div className="pub-success">{success}</div>}
@@ -99,11 +104,12 @@ export default function PublisherInfoForm({ onSuccess }) {
           <label>Mô tả</label>
           <textarea name="pubDescription" value={form.pubDescription} onChange={handleChange} />
         </div>
-        <Link to='/login'>Về Trang Đăng nhập</Link>
+
+        <Link to="/login" className="text-sm text-blue-600 mt-2 block">Về Trang Đăng nhập</Link>
 
         <div className="pub-actions">
           <button type="submit" className="pub-btn" disabled={loading}>
-            {loading ? "Đang gửi..." : "Hoàn tất đăng ký"}
+            {loading ? "Đang gửi..." : "Gửi yêu cầu"}
           </button>
         </div>
       </form>

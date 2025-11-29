@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/userManagement.css";
-import HandleErrorAPI from "../utils/handleErrorAPI";
-import { getAvatarUrl } from "../utils/avatar";
+import "../../styles/userManagement.css";
+import HandleErrorAPI from "../../utils/handleErrorAPI";
+import { getAvatarUrl } from "../../utils/avatar";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
